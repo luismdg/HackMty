@@ -58,6 +58,7 @@ Run Python backend:
 npm start
 ```
 The frontend should now be running at http://localhost:3000
+
 ---
 
 ## 3 Run Both Backend & Frontend Concurrently
@@ -73,6 +74,7 @@ Start the backend at http://localhost:8000
 Start the frontend at http://localhost:3000
 
 Make sure the Conda environment weatherapp is active for the backend to work.
+
 ---
 
 ## 4. Notes
