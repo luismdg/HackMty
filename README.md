@@ -58,8 +58,9 @@ Run Python backend:
 npm start
 ```
 The frontend should now be running at http://localhost:3000
+---
 
-### 3 Run Both Backend & Frontend Concurrently
+## 3 Run Both Backend & Frontend Concurrently
 From the root folder of the project:
 
 ```bash
@@ -72,8 +73,9 @@ Start the backend at http://localhost:8000
 Start the frontend at http://localhost:3000
 
 Make sure the Conda environment weatherapp is active for the backend to work.
+---
 
-### 4. Notes
+## 4. Notes
 If the backend is already running, npm run dev will not start a second instance; make sure to close other servers if ports are busy.
 
 The API endpoint /predict returns a mock prediction JSON; you can replace it with real ML predictions in backend/app/routes/predictions.py.
