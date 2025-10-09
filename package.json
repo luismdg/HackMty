@@ -1,0 +1,24 @@
+{
+  "name": "weather-prediction-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Weather prediction app with FastAPI backend and React frontend",
+  "main": "index.js",
+  "type": "commonjs",
+  "scripts": {
+    "dev": "concurrently \"cd backend && uvicorn main:app --reload --port 8000\" \"cd frontend && npm start\"",
+    "start": "cd frontend && npm start",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^9.2.0"
+  },
+  "dependencies": {
+    "leaflet": "^1.9.4",
+    "maplibre-gl": "^5.7.1",
+    "react-leaflet": "^5.0.0"
+  }
+}

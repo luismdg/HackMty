@@ -1,0 +1,6 @@
+.container {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 75% 1fr;
+    background-color: #0F1A2A;
+}
