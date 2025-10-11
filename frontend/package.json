@@ -20,7 +20,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "dev": "concurrently \"cd backend && uvicorn main:app --reload --port 8000\" \"cd frontend && npm start\""
+    "dev": "concurrently \"cd backend && uvicorn app.main:app --reload --port 8000\" \"cd frontend && npm start\""
   },
   "eslintConfig": {
     "extends": [

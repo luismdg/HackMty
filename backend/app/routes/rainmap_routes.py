@@ -32,10 +32,9 @@ def generate_grid_points(grid_size: int = 15) -> List[Dict[str, float]]:
     min_lat = mexico_bounds[0][1]
     max_lat = mexico_bounds[1][1]
 
-    lon_step = (max_lon - min_lon) / (grid_size - 1) if grid_size > 1 else 0
-    lat_step = (max_lat - min_lat) / (grid_size - 1) if grid_size > 1 else 0
+    lon_step = (max_lon - min_lon) / (grid_size - 1)
+    lat_step = (max_lat - min_lat) / (grid_size - 1)
 
-    # Generate grid points
     for row in range(grid_size):
         for col in range(grid_size):
             longitude = min_lon + (col * lon_step)
@@ -54,17 +53,17 @@ def generate_grid_points(grid_size: int = 15) -> List[Dict[str, float]]:
 
 def get_weather_status(rain: float, cloud_cover: float) -> str:
     """Determine weather status based on rain and cloud cover"""
-    if rain > 5:  # Heavy rain
+    if rain > 5:
         return "Heavy rain"
-    elif rain > 1:  # Light rain
+    elif rain > 1:
         return "Light rain"
-    elif rain > 0:  # Drizzle
+    elif rain > 0:
         return "Drizzle"
-    elif cloud_cover > 70:  # Cloudy
+    elif cloud_cover > 70:
         return "Cloudy"
-    elif cloud_cover > 30:  # Partly cloudy
+    elif cloud_cover > 30:
         return "Partly cloudy"
-    else:  # Clear
+    else:
         return "Clear"
 
 
@@ -75,7 +74,7 @@ def get_weather_icon(status: str) -> str:
     elif "thunder" in status.lower():
         return WEATHER_ICONS["thunderstorm"]
     elif "cloud" in status.lower():
-        return "☁️" if status == "Cloudy" else "⛅"
+        return WEATHER_ICONS["cloudy"]
     elif "clear" in status.lower():
         return WEATHER_ICONS["clear"]
     elif "drizzle" in status.lower():
@@ -84,7 +83,7 @@ def get_weather_icon(status: str) -> str:
         return WEATHER_ICONS["unknown"]
 
 
-@router.get("/predict")
+@router.get("/")
 def get_prediction(grid_size: int = 15):
     """Get current weather for grid points across Mexico"""
     grid_points = generate_grid_points(grid_size)
@@ -93,7 +92,6 @@ def get_prediction(grid_size: int = 15):
 
     try:
         for point in grid_points:
-            # Build the API URL with correct parameter names
             url = "https://api.open-meteo.com/v1/forecast"
             params = {
                 "latitude": point["lat"],
@@ -103,45 +101,21 @@ def get_prediction(grid_size: int = 15):
                 "forecast_days": 1,
             }
 
-            # Make the API request
             response = requests.get(url, params=params, timeout=30)
             response.raise_for_status()
             data = response.json()
 
-            # Debug: Print the first point's data structure
-            if not grid_data:  # Only for first point
-                print(f"First point API response keys: {data.keys()}")
-                if "hourly" in data:
-                    print(f"Hourly keys: {data['hourly'].keys()}")
-                    print(f"Sample data - Time: {data['hourly']['time'][:5]}")
-                    print(f"Sample data - Temp: {data['hourly']['temperature_2m'][:5]}")
-                    print(f"Sample data - Rain: {data['hourly']['rain'][:5]}")
-                    print(f"Sample data - Cloud: {data['hourly']['cloud_cover'][:5]}")
-
-            # Extract current data (first hour of the hourly data)
             hourly = data.get("hourly", {})
 
-            # Check if we have data
             if not hourly or not hourly.get("time"):
-                print(f"No hourly data for point {point['name']}")
                 continue
 
-            current_hour_index = 0  # First entry should be current hour
+            current_hour_index = 0
 
-            # Safely extract data with defaults
-            temperature_data = hourly.get("temperature_2m", [])
-            rain_data = hourly.get("rain", [])
-            cloud_cover_data = hourly.get("cloud_cover", [])
+            temperature = hourly.get("temperature_2m", [0])[current_hour_index]
+            rain = hourly.get("rain", [0])[current_hour_index]
+            cloud_cover = hourly.get("cloud_cover", [0])[current_hour_index]
 
-            temperature = (
-                temperature_data[current_hour_index] if temperature_data else 0
-            )
-            rain = rain_data[current_hour_index] if rain_data else 0
-            cloud_cover = (
-                cloud_cover_data[current_hour_index] if cloud_cover_data else 0
-            )
-
-            # Determine weather status
             status = get_weather_status(rain, cloud_cover)
             icon = get_weather_icon(status)
 

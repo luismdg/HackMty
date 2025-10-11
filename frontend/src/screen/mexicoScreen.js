@@ -14,7 +14,7 @@ const MexicoScreen = () => {
         setLoading(true);
         setError(null);
         
-        const response = await fetch('http://localhost:8000/predict?grid_size=15');
+        const response = await fetch('http://localhost:8000/rainmap?grid_size=15');
         
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
