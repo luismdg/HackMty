@@ -14,7 +14,7 @@ const MexicoScreen = () => {
         setLoading(true);
         setError(null);
         
-        const response = await fetch('http://localhost:8000/rainmap?grid_size=15');
+        const response = await fetch('http://localhost:8000/rainmap?grid_size=10');
         
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -36,7 +36,7 @@ const MexicoScreen = () => {
     };
 
     fetchData();
-    const interval = setInterval(fetchData, 300000);
+    const interval = setInterval(fetchData, 1000000);
     return () => clearInterval(interval);
   }, []);
 

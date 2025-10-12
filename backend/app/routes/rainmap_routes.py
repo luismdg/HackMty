@@ -101,7 +101,7 @@ def get_prediction(grid_size: int = 15):
                 "forecast_days": 1,
             }
 
-            response = requests.get(url, params=params, timeout=30)
+            response = requests.get(url, params=params, timeout=59)
             response.raise_for_status()
             data = response.json()
 
