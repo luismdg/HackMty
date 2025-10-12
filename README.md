@@ -68,12 +68,12 @@ Make sure the Conda environment weatherapp is active for the backend to work.
 
 ---
 
-## 4. Running the Storm Scheduler (schedule.py)
-The backend and scheduler are isolated processes — the FastAPI server runs the API, while the scheduler script periodically generates new storm data.
+## 4. Running the 'Storm Downloader' (schedule.py)
+The backend and 'Storm Downloader' are isolated processes. The FastAPI server runs the API, while the 'Storm Downloader' script periodically downloads new storm data.
 They coexist in the same repository for convenience but operate independently.
 
 ### 4.1 Run Once for Debugging
-If you just want to execute the scheduler once (to debug or test):
+If you just want to execute the 'Storm Downloader' once (to debug or test):
 ```bash
 cd backend
 python -m app.services.schedule
@@ -104,8 +104,6 @@ This will detach the process and write logs to monitor.log.
 
 ## 5. Notes
 If npm run dev shows port conflicts, make sure no previous backend or frontend instances are running.
-
-The backend’s /predict endpoint currently returns mock data — replace it with your ML logic in backend/app/routes/predictions.py.
 
 Enable CORS in backend/app/main.py so the frontend can communicate with the API:
 
