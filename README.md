@@ -72,33 +72,64 @@ Make sure the Conda environment weatherapp is active for the backend to work.
 The backend and 'Storm Downloader' are isolated processes. The FastAPI server runs the API, while the 'Storm Downloader' script periodically downloads new storm data.
 They coexist in the same repository for convenience but operate independently.
 
-### 4.1 Run Once for Debugging
-If you just want to execute the 'Storm Downloader' once (to debug or test):
+### 4.1 Prerequisites
+Before running the script, make sure these dependencies are installed.
+They’re not automatically included in "requirements.txt" because of geospatial libraries.
+
+If using Conda (recommended for Windows):
+```bash
+conda activate weatherapp
+conda install -c conda-forge cartopy shapely xarray netcdf4 numpy pandas matplotlib scipy -y
+```
+
+If using Python / pip only (not Conda)::
+```bash
+pip install shapely xarray netcdf4 numpy pandas matplotlib scipy
+pip install tropycal
+```
+⚠️ cartopy can be difficult to build with pip on Windows.
+If it fails, use Conda instead — Conda handles compiled geospatial libraries automatically.
+
+### 4.2 Run Once (Debug or Manual Execution)
+Run a single data-fetch cycle manually:
+Using Conda:
+```bash
+conda activate weatherapp
+cd backend
+python -m app.services.schedule
+```
+Using Python only:
 ```bash
 cd backend
 python -m app.services.schedule
 ```
-It will run fully and exit after one cycle.
+This will:
+- Fetch the latest tropical storm data for Mexico.
+- Process and store it locally (depending on your backend setup).
+- Exit after completing one full cycle.
 
-### 4.2 Run Periodically (in Loop)
-You can use a small bash script to run schedule.py automatically at fixed intervals.
+### 4.3 Run Periodically (Automatic Loop)
+To automate downloads at fixed intervals, you can use the included monitor.sh script.
 
-Make it executable:
+Make it executable (only once):
 ```bash
 chmod +x monitor.sh
 ```
 
-Then run it anytime from the root directory:
+Then start it from the project root:
 ```bash
 ./monitor.sh
 ```
+It will repeatedly call schedule.py every few minutes, depending on your configured delay.
 
-### 4.3 Optional: Run as Background Service
-If you want it to keep running even after closing the terminal:
+### 4.4 Optional: Run in Background
+If you want the process to keep running even after closing the terminal:
 ```bash
 nohup ./monitor.sh > monitor.log 2>&1 &
 ```
-This will detach the process and write logs to monitor.log.
+This will:
+- Detach the process from your session.
+- Redirect all output logs to monitor.log.
 
 ---
 
