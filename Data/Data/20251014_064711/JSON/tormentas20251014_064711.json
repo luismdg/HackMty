@@ -1,0 +1,35 @@
+{
+    "0": {
+        "id": "AL122025",
+        "name": "LORENZO",
+        "year": 2025,
+        "season": 2025,
+        "basin": "north_atlantic",
+        "max_wind": null,
+        "min_pressure": null,
+        "ace": 1.315,
+        "invest": false,
+        "start_time": null,
+        "end_time": null,
+        "source": "NHC Hurricane Database",
+        "storm_type": [
+            "DB",
+            "DB",
+            "DB",
+            "DB",
+            "DB",
+            "DB",
+            "DB",
+            "DB",
+            "DB",
+            "TS",
+            "TS",
+            "TS",
+            "TS",
+            "TS",
+            "TS"
+        ]
+    },
+    "date": "2025-10-16 16:30:55",
+    "zona_horaria": "America/Mexico_City"
+}

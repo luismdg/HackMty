@@ -1,0 +1,32 @@
+{
+    "0": {
+        "id": "EP912025",
+        "name": "91E",
+        "year": 2025,
+        "season": 2025,
+        "basin": "east_pacific",
+        "max_wind": null,
+        "min_pressure": null,
+        "ace": 0.0,
+        "invest": true,
+        "start_time": null,
+        "end_time": null,
+        "source": "NHC Hurricane Database",
+        "storm_type": [
+            "DB",
+            "DB",
+            "DB",
+            "DB",
+            "DB",
+            "DB",
+            "DB",
+            "DB",
+            "DB",
+            "DB",
+            "DB",
+            "DB"
+        ]
+    },
+    "date": "2025-10-16 16:30:55",
+    "zona_horaria": "America/Mexico_City"
+}
