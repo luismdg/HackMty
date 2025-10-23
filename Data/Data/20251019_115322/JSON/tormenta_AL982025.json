@@ -1,0 +1,16 @@
+{
+    "id": "AL982025",
+    "name": "98L",
+    "year": 2025,
+    "date": "2025-10-19 11:53:47.434905",
+    "zona_horaria": "America/Mexico_City",
+    "season": 2025,
+    "basin": "north_atlantic",
+    "max_wind": null,
+    "min_pressure": null,
+    "ace": 0.0,
+    "invest": true,
+    "start_time": null,
+    "end_time": null,
+    "source": "NHC Hurricane Database"
+}
