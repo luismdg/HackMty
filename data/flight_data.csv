@@ -1,0 +1,5 @@
+flight_id,airline,airline_icon,aircraft,max_capacity,tickets_sold,duration,origin,destination,departure_date,departure_time
+CTL395,American Airlines,🛫,Boeing 777-300ER,280,245,5.5,JFK - New York,LAX - Los Angeles,2025-10-28,14:30
+AA1234,American Airlines,🛫,Airbus A320,180,150,3.0,DFW - Dallas,ORD - Chicago,2025-10-29,10:15
+DL7890,Delta Airlines,✈️,Boeing 737-800,160,140,2.5,ATL - Atlanta,MIA - Miami,2025-10-30,08:45
+UA4567,United Airlines,✈️,Airbus A319,120,110,4.0,IAH - Houston,DEN - Denver,2025-10-31,16:20

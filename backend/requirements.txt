@@ -1,13 +1,4 @@
 fastapi
-uvicorn[standard]
-python-multipart
-scikit-learn
-xgboost
-numpy
+uvicorn
 pandas
 python-dotenv
-requests
-requests-cache
-retry-requests
-openmeteo-requests
-tropycal

@@ -45,7 +45,7 @@ The backend should now be running at http://localhost:8000
 Go to project folder:
 ```bash
 cd frontend
-npm install maplibre-gl leaflet react-leaflet
+npm install lucide-react
 npm start
 ```
 The frontend should now be running at http://localhost:3000
