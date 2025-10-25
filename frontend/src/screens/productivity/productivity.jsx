@@ -3,12 +3,15 @@ import { Button } from "../../components/ui/button";
 import { Badge } from "../../components/ui/badge";
 import { Select } from "../../components/ui/select";
 
-export function ProductivityTable() {
+export function ProductivityTable({ onOperatorSelect }) {
   const [sessions, setSessions] = useState([]);
   const [statistics, setStatistics] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [filter, setFilter] = useState("all");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [operatorFilter, setOperatorFilter] = useState("any");
+  const [shiftFilter, setShiftFilter] = useState("any");
+  const [areaFilter, setAreaFilter] = useState("any");
 
   useEffect(() => {
     async function fetchProductivityData() {
@@ -30,7 +33,7 @@ export function ProductivityTable() {
           ([sessionId, sessionData]) => ({
             id: sessionId,
             ...sessionData,
-            rank: calculateRank(sessionData),
+            overall: calculateOverall(sessionData),
           })
         );
 
@@ -47,40 +50,61 @@ export function ProductivityTable() {
     fetchProductivityData();
   }, []);
 
-  const calculateRank = (session) => {
-    const score =
-      session.eficiencia_operario * 0.7 + session.tasa_items_por_minuto * 0.3;
-    if (score >= 95) return "S";
-    if (score >= 85) return "A";
-    if (score >= 75) return "B";
-    if (score >= 65) return "C";
-    return "D";
+  const calculateOverall = (session) => {
+    const score = (session.eficiencia_operario * 0.6 + session.tasa_items_por_minuto * 0.4);
+    return Math.min(100, Math.max(0, score));
   };
 
-  const getRankColor = (rank) => {
-    const colors = {
-      S: "bg-purple-700 text-white",
-      A: "bg-green-700 text-white",
-      B: "bg-blue-700 text-white",
-      C: "bg-yellow-400 text-black",
-      D: "bg-red-700 text-white",
-    };
-    return colors[rank] || "bg-gray-600 text-white";
+  const getOverallColor = (overall) => {
+    if (overall >= 90) return "border-green-500";
+    if (overall >= 80) return "border-yellow-500";
+    if (overall >= 70) return "border-orange-500";
+    return "border-red-500";
   };
+
+  const uniqueOperators = [...new Set(sessions.map(session => session.nombre_operario))];
+  const uniqueAreas = [...new Set(sessions.map(session => session.area_trabajo))];
 
   const filteredSessions = sessions.filter((session) => {
-    if (filter === "all") return true;
-    if (filter === "high") return session.rank === "S" || session.rank === "A";
-    if (filter === "matutino") return session.turno === "Matutino";
-    if (filter === "vespertino") return session.turno === "Vespertino";
-    return true;
+    const matchesSearch =
+      session.nombre_operario.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      session.puesto.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      session.id.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesOperator = operatorFilter === "any" || session.nombre_operario === operatorFilter;
+    const matchesShift = shiftFilter === "any" || session.turno === shiftFilter;
+    const matchesArea = areaFilter === "any" || session.area_trabajo === areaFilter;
+
+    return matchesSearch && matchesOperator && matchesShift && matchesArea;
   });
+
+  const handleOperatorClick = (operatorName) => {
+    if (onOperatorSelect) {
+      onOperatorSelect(operatorName);
+    }
+  };
+
+  const handleSessionClick = (session) => {
+    if (onOperatorSelect) {
+      onOperatorSelect(session.nombre_operario);
+    }
+  };
 
   if (loading)
     return (
-      <div className="p-8 text-white">Cargando datos de productividad...</div>
+      <div className="p-8 text-white">📊 Cargando datos de productividad...</div>
     );
-  if (error) return <div className="p-8 text-red-500">{error}</div>;
+
+  if (error)
+    return (
+      <div className="p-8 text-white">
+        <div className="bg-[#1A2639] border border-[#2C3E50] p-4 mb-4">
+          <p className="text-red-400 font-semibold">⚠️ Error:</p>
+          <p className="text-red-300">{error}</p>
+        </div>
+      </div>
+    );
+
   if (!sessions.length)
     return (
       <div className="p-8 text-white">
@@ -89,7 +113,7 @@ export function ProductivityTable() {
     );
 
   return (
-    <div className="p-8 space-y-6 min-h-screen text-white">
+    <div className="min-h-screen bg-[#050B16] text-white p-8 space-y-6">
       {/* Header */}
       <div>
         <h1 className="text-3xl font-light tracking-tight text-[#DFBD69]">
@@ -100,119 +124,155 @@ export function ProductivityTable() {
         </p>
       </div>
 
-      {/* Statistics Cards */}
-      {statistics && (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 ">
-          {Object.entries(statistics.estadisticas_generales).map(
-            ([key, value]) => (
-              <div key={key} className="bg-[#0C1526] rounded-lg px-4 py-6">
-                <p className="text-sm text-[#C8D6E5] capitalize">
-                  {key.replace(/_/g, " ")}
-                </p>
-                <p className="text-2xl font-bold">{value}</p>
+      {/* KPI Card */}
+      <div className="bg-[#0C1526] p-6 rounded-md">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="col-span-1">
+            <div className="flex gap-3">
+              <h3 className="text-lg text-[#DFBD69] mb-4">
+                KPI
+              </h3>
+              <h3 className="text-lg mb-4">
+                Progreso Mensual
+              </h3>
+            </div>
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-[#94A3B8]">Meta:</span>
+                <span className="text-white">95% eficiencia</span>
               </div>
-            )
-          )}
+              <div className="flex justify-between text-sm">
+                <span className="text-[#94A3B8]">Actual:</span>
+                <span className="text-[#3B82F6] font-semibold">
+                  {statistics?.estadisticas_generales?.eficiencia_promedio || 0}%
+                </span>
+              </div>
+            </div>
+          </div>
+          <div className="col-span-3">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-[#94A3B8]">Progreso hacia la meta</span>
+              <span className="text-sm font-semibold">
+                {Math.round((statistics?.estadisticas_generales?.eficiencia_promedio / 95) * 100)}%
+              </span>
+            </div>
+            <div className="w-full bg-[#09111E] rounded-full h-3">
+              <div
+                className="bg-gradient-to-r from-[#3B82F6] to-[#1D4ED8] h-3 rounded-full transition-all duration-500"
+                style={{
+                  width: `${Math.min(100, (statistics?.estadisticas_generales?.eficiencia_promedio / 95) * 100)}%`
+                }}
+              ></div>
+            </div>
+          </div>
         </div>
-      )}
+      </div>
 
       {/* Filters */}
-      <div className="flex gap-4">
-        <Select
-          value={filter}
-          onValueChange={setFilter}
-          className="bg-[#0C1526] border border-[#1E293B] rounded-lg text-white"
-        >
-          <option value="all">Todos los operarios</option>
-          <option value="high">Alto desempeño (A-S)</option>
-          <option value="matutino">Turno Matutino</option>
-          <option value="vespertino">Turno Vespertino</option>
-        </Select>
-        <Button className=" text-white hover:bg-[#2563EB]">
-          Exportar Reporte
-        </Button>
+      <div className="bg-[#0C1526] p-6 space-y-4 rounded-md">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div>
+            <label className="text-xs mb-1.5 block text-[#94A3B8]">
+              Buscar operario
+            </label>
+            <input
+              placeholder="Nombre, puesto o ID"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full bg-[#09111E] rounded-md px-3 py-2 text-sm text-white placeholder:text-gray-500 focus:ring-1 focus:ring-[#3B82F6] outline-none"
+            />
+          </div>
+          <div>
+            <label className="text-xs mb-1.5 block text-[#94A3B8]">
+              Operario
+            </label>
+            <Select value={operatorFilter} onValueChange={setOperatorFilter}>
+              <option value="any">- Cualquiera -</option>
+              {uniqueOperators.map(operator => (
+                <option key={operator} value={operator}>{operator}</option>
+              ))}
+            </Select>
+          </div>
+          <div>
+            <label className="text-xs mb-1.5 block text-[#94A3B8]">Turno</label>
+            <Select value={shiftFilter} onValueChange={setShiftFilter}>
+              <option value="any">- Cualquiera -</option>
+              <option value="Matutino">Matutino</option>
+              <option value="Vespertino">Vespertino</option>
+            </Select>
+          </div>
+          <div>
+            <label className="text-xs mb-1.5 block text-[#94A3B8]">
+              Área de trabajo
+            </label>
+            <Select value={areaFilter} onValueChange={setAreaFilter}>
+              <option value="any">- Cualquiera -</option>
+              {uniqueAreas.map(area => (
+                <option key={area} value={area}>{area}</option>
+              ))}
+            </Select>
+          </div>
+        </div>
       </div>
 
       {/* Results Info */}
-      <div className="text-sm text-[#C8D6E5]">
-        Mostrando {filteredSessions.length} de {sessions.length} sesiones
+      <div className="text-xs text-[#64748B]">
+        Mostrando {filteredSessions.length} de {sessions.length} resultados.
       </div>
 
       {/* Productivity Table */}
-      <div className="overflow-x-auto rounded-2xl">
-        <table className="w-full border-collapse">
-          <thead>
-            <tr className="bg-[#0C1526] backdrop:blur-md rounded-lg text-[#C8D6E5] text-xs uppercase">
-              <th className="p-4 text-left">Rank</th>
-              <th className="p-4 text-left">Operario</th>
-              <th className="p-4 text-left">Puesto</th>
-              <th className="p-4 text-left">Turno</th>
-              <th className="p-4 text-left">Área</th>
-              <th className="p-4 text-right">Items</th>
-              <th className="p-4 text-right">Tasa/min</th>
-              <th className="p-4 text-right">Eficiencia</th>
-              <th className="p-4 text-center">Estado</th>
+      <div className="overflow-hidden rounded-md">
+        <table className="w-full text-left text-sm border-collapse">
+          <thead className="bg-[#0D1B2A] text-[#94A3B8] uppercase text-xs">
+            <tr>
+              <th className="p-3 font-semibold">Operario</th>
+              <th className="p-3 font-semibold">Puesto</th>
+              <th className="p-3 font-semibold">Turno</th>
+              <th className="p-3 font-semibold">Área</th>
+              <th className="p-3 font-semibold text-right">Items/min</th>
+              <th className="p-3 font-semibold text-center">Overall</th>
             </tr>
           </thead>
           <tbody>
             {filteredSessions.map((session) => (
               <tr
                 key={session.id}
-                className="hover:bg-[#1E293B]/40 transition-colors"
+                className="hover:bg-[#1E293B]/40 transition-colors cursor-pointer"
+                onClick={() => handleSessionClick(session)}
               >
-                <td className="p-4">
-                  <Badge
-                    className={`${getRankColor(
-                      session.rank
-                    )} text-xs font-bold`}
-                  >
-                    {session.rank}
-                  </Badge>
+                <td className="p-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 bg-[#1E293B] rounded-full flex items-center justify-center text-xs font-semibold">
+                      {session.nombre_operario.split(' ').map(n => n[0]).join('')}
+                    </div>
+                    <div>
+                      <p className="text-white font-medium">{session.nombre_operario}</p>
+                      <p className="text-xs text-[#94A3B8]">{session.id}</p>
+                    </div>
+                  </div>
                 </td>
-                <td className="p-4">
-                  <p className="font-medium">{session.nombre_operario}</p>
-                  <p className="text-xs text-[#C8D6E5]">{session.id}</p>
-                </td>
-                <td className="p-4">{session.puesto}</td>
-                <td className="p-4">
+                <td className="p-3 text-[#E2E8F0]">{session.puesto}</td>
+                <td className="p-3">
                   <Badge
-                    variant={
-                      session.turno === "Matutino" ? "accent" : "outline"
-                    }
-                    className="text-xs"
+                    variant="status"
+                    className={`${session.turno === "Matutino"
+                      ? "bg-[#172554] text-[#60A5FA] border border-[#1E40AF]"
+                      : "bg-[#422006] text-[#FDBA74] border border-[#713F12]"
+                      } tracking-wide px-2 py-1 text-xs uppercase`}
                   >
                     {session.turno}
                   </Badge>
                 </td>
-                <td className="p-4">{session.area_trabajo}</td>
-                <td className="p-4 text-right">{session.conteo_total_items}</td>
-                <td className="p-4 text-right">
-                  {session.tasa_items_por_minuto}
+                <td className="p-3 text-[#E2E8F0]">{session.area_trabajo}</td>
+                <td className="p-3 text-right text-white font-semibold">
+                  {session.tasa_items_por_minuto.toFixed(1)}
                 </td>
-                <td className="p-4 text-right">
-                  <div className="flex items-center justify-end gap-2">
-                    <span className="font-semibold">
-                      {session.eficiencia_operario}%
-                    </span>
-                    <div className="w-16 bg-[#1E293B] rounded-full h-2">
-                      <div
-                        className="bg-[#3B82F6] h-2 rounded-full"
-                        style={{ width: `${session.eficiencia_operario}%` }}
-                      ></div>
-                    </div>
-                  </div>
-                </td>
-                <td className="p-4 text-center">
-                  <Badge
-                    variant={
-                      session.estado_sesion === "COMPLETADA"
-                        ? "accent"
-                        : "muted"
-                    }
-                    className="text-xs"
+                <td className="p-3 text-center">
+                  <div
+                    className={`w-12 h-12 mx-auto rounded-lg border-2 ${getOverallColor(session.overall)} flex items-center justify-center text-white font-bold text-sm`}
                   >
-                    {session.estado_sesion}
-                  </Badge>
+                    {Math.round(session.overall)}
+                  </div>
                 </td>
               </tr>
             ))}
@@ -220,49 +280,47 @@ export function ProductivityTable() {
         </table>
       </div>
 
-      {/* Top Performers */}
+      {/* Top Performers Section */}
       {statistics?.top_operarios && (
-        <div className="backdrop-blur-xl bg-white/10 p-6 shadow-md rounded-2xl">
-          <h2 className="text-xl font-bold mb-4">Top Operarios</h2>
+        <div className="bg-[#0C1526] p-6 rounded-md">
+          <h2 className="text-xl font-semibold text-[#DFBD69] mb-4">
+            Top Operarios
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {statistics.top_operarios.map((operario, index) => (
+            {statistics.top_operarios.slice(0, 3).map((operario, index) => (
               <div
                 key={operario.nombre}
-                className=" p-4 hover:bg-[#1E293B]/30 transition-colors"
+                className="bg-[#09111E] p-4 rounded-md border border-[#1E293B] hover:border-[#3B82F6] transition-colors cursor-pointer"
+                onClick={() => handleOperatorClick(operario.nombre)}
               >
-                <div className="flex items-center gap-3 mb-2">
-                  <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-white ${
-                      index === 0
-                        ? "bg-yellow-500"
-                        : index === 1
-                        ? "bg-gray-400"
-                        : index === 2
-                        ? "bg-orange-500"
-                        : "bg-blue-700"
-                    }`}
-                  >
+                <div className="flex items-center gap-3 mb-3">
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-white ${index === 0 ? "bg-yellow-500" :
+                    index === 1 ? "bg-gray-400" :
+                      "bg-orange-500"
+                    }`}>
                     {index + 1}
                   </div>
                   <div>
-                    <p className="font-semibold">{operario.nombre}</p>
-                    <p className="text-xs text-[#C8D6E5]">
-                      {operario.total_sesiones} sesiones
+                    <p className="font-semibold text-white">{operario.nombre}</p>
+                    <p className="text-xs text-[#94A3B8]">
+                      {operario.areas_trabajo?.join(', ') || 'Múltiples áreas'}
                     </p>
                   </div>
                 </div>
-                <div className="space-y-1">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-[#C8D6E5]">Eficiencia:</span>
-                    <span className="font-semibold text-[#3B82F6]">
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-[#94A3B8]">Eficiencia:</span>
+                    <span className="text-white font-semibold">
                       {operario.eficiencia_promedio}%
                     </span>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-[#C8D6E5]">Total Items:</span>
-                    <span className="font-semibold">
-                      {operario.total_items}
-                    </span>
+                  <div className="flex justify-between">
+                    <span className="text-[#94A3B8]">Sesiones:</span>
+                    <span className="text-white">{operario.total_sesiones}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-[#94A3B8]">Total Items:</span>
+                    <span className="text-white">{operario.total_items}</span>
                   </div>
                 </div>
               </div>

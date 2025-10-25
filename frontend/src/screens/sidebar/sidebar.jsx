@@ -19,27 +19,25 @@ export function Sidebar({ currentSection, onSectionChange }) {
           {/* Flight Consumption Predictor */}
           <Button
             variant={currentSection === "flights" ? "default" : "ghost"}
-            className={`w-full justify-start text-white hover:text-[#DFBD69] hover:rounded-sm${
-              currentSection === "flights" ? "bg-[#11233F] text-[#DFBD69]" : ""
-            }`}
+            className={`w-full justify-start text-white hover:text-[#DFBD69] hover:rounded-sm${currentSection === "flights" ? "bg-[#11233F] text-[#DFBD69]" : ""
+              }`}
             onClick={() => onSectionChange("flights")}
           >
             <Plane className="w-4 h-4 mr-3" />
-            Predictor de Consumo
+            Vuelos
           </Button>
 
           {/* Productivity Analytics */}
           <Button
             variant={currentSection === "productivity" ? "default" : "ghost"}
-            className={`w-full justify-start text-nowrap hover:text-[#DFBD69] hover:rounded-sm${
-              currentSection === "productivity"
-                ? "bg-[#11233F] text-[#DFBD69]"
-                : ""
-            }`}
+            className={`w-full justify-start text-nowrap hover:text-[#DFBD69] hover:rounded-sm${currentSection === "productivity"
+              ? "bg-[#11233F] text-[#DFBD69]"
+              : ""
+              }`}
             onClick={() => onSectionChange("productivity")}
           >
             <BarChart3 className="w-4 h-4 mr-3" />
-            Análisis de Productividad
+            Empleados
           </Button>
         </div>
       </nav>
