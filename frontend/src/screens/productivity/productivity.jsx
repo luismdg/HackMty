@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "../../components/ui/button";
 import { Badge } from "../../components/ui/badge";
-import { Select } from "../../components/ui/select";
 
 export function ProductivityTable() {
   const [sessions, setSessions] = useState([]);
@@ -59,11 +58,11 @@ export function ProductivityTable() {
 
   const getRankColor = (rank) => {
     const colors = {
-      S: "bg-purple-700 text-white",
-      A: "bg-green-700 text-white",
-      B: "bg-blue-700 text-white",
-      C: "bg-yellow-400 text-black",
-      D: "bg-red-700 text-white",
+      S: "bg-purple-700/50 backdrop-blur-3xl text-white border-none rounded-md",
+      A: "bg-green-700/50 backdrop-blur-3xl text-white border-none rounded-md",
+      B: "bg-blue-700/50 backdrop-blur-3xl text-white border-none rounded-md",
+      C: "bg-yellow-400/50 backdrop-blur-3xl text-black border-none rounded-md",
+      D: "bg-red-700/50 backdrop-blur-3xl text-white border-none rounded-md",
     };
     return colors[rank] || "bg-gray-600 text-white";
   };
@@ -93,7 +92,7 @@ export function ProductivityTable() {
       {/* Header */}
       <div>
         <h1 className="text-3xl font-light tracking-tight text-[#DFBD69]">
-          Productividad del Equipo
+          Análisis de Productividad
         </h1>
         <p className="text-neutral-400 mt-1 text-sm">
           Desempeño y métricas de operarios
@@ -105,8 +104,11 @@ export function ProductivityTable() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 ">
           {Object.entries(statistics.estadisticas_generales).map(
             ([key, value]) => (
-              <div key={key} className="bg-[#0C1526] rounded-lg px-4 py-6">
-                <p className="text-sm text-[#C8D6E5] capitalize">
+              <div
+                key={key}
+                className="backdrop-blur-3xl bg-blue-300/10 rounded-md px-4 py-6"
+              >
+                <p className="text-xs pb-2 text-[#C8D6E5] capitalize">
                   {key.replace(/_/g, " ")}
                 </p>
                 <p className="text-2xl font-bold">{value}</p>
@@ -117,18 +119,18 @@ export function ProductivityTable() {
       )}
 
       {/* Filters */}
-      <div className="flex gap-4">
-        <Select
+      <div className="flex gap-4 text-xs">
+        <select
           value={filter}
-          onValueChange={setFilter}
-          className="bg-[#0C1526] border border-[#1E293B] rounded-lg text-white"
+          onChange={(e) => setFilter(e.target.value)}
+          className="appearance-none bg-transparent border border-slate-900 flex pl-5 items-center rounded-md text-white"
         >
           <option value="all">Todos los operarios</option>
           <option value="high">Alto desempeño (A-S)</option>
           <option value="matutino">Turno Matutino</option>
           <option value="vespertino">Turno Vespertino</option>
-        </Select>
-        <Button className=" text-white hover:bg-[#2563EB]">
+        </select>
+        <Button className=" text-white hover:bg-[#0C1526] border-none text-xs">
           Exportar Reporte
         </Button>
       </div>
@@ -139,10 +141,10 @@ export function ProductivityTable() {
       </div>
 
       {/* Productivity Table */}
-      <div className="overflow-x-auto rounded-2xl">
+      <div className="overflow-x-auto rounded-md">
         <table className="w-full border-collapse">
           <thead>
-            <tr className="bg-[#0C1526] backdrop:blur-md rounded-lg text-[#C8D6E5] text-xs uppercase">
+            <tr className="ackdrop-blur-3xl bg-blue-300/10 text-[#C8D6E5] text-xs uppercase">
               <th className="p-4 text-left">Rank</th>
               <th className="p-4 text-left">Operario</th>
               <th className="p-4 text-left">Puesto</th>
@@ -158,7 +160,7 @@ export function ProductivityTable() {
             {filteredSessions.map((session) => (
               <tr
                 key={session.id}
-                className="hover:bg-[#1E293B]/40 transition-colors"
+                className="backdrop-blur-3xl bg-slate-900/20 hover:bg-[#1E293B]/40 transition-colors text-xs"
               >
                 <td className="p-4">
                   <Badge
@@ -222,8 +224,8 @@ export function ProductivityTable() {
 
       {/* Top Performers */}
       {statistics?.top_operarios && (
-        <div className="backdrop-blur-xl bg-white/10 p-6 shadow-md rounded-2xl">
-          <h2 className="text-xl font-bold mb-4">Top Operarios</h2>
+        <div className="backdrop-blur-3xl bg-blue-300/10 p-6 shadow-md rounded-md text-xs">
+          <h2 className="text-sm font-bold mb-4">Top Operarios</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {statistics.top_operarios.map((operario, index) => (
               <div
@@ -234,12 +236,12 @@ export function ProductivityTable() {
                   <div
                     className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-white ${
                       index === 0
-                        ? "bg-yellow-500"
+                        ? "bg-yellow-500/50 backdrop-blur-3xl"
                         : index === 1
-                        ? "bg-gray-400"
+                        ? "bg-gray-400/50 backdrop-blur-3xl"
                         : index === 2
-                        ? "bg-orange-500"
-                        : "bg-blue-700"
+                        ? "bg-orange-500/50 backdrop-blur-3xl"
+                        : "bg-blue-700/50 backdrop-blur-3xl"
                     }`}
                   >
                     {index + 1}
@@ -254,7 +256,7 @@ export function ProductivityTable() {
                 <div className="space-y-1">
                   <div className="flex justify-between text-sm">
                     <span className="text-[#C8D6E5]">Eficiencia:</span>
-                    <span className="font-semibold text-[#3B82F6]">
+                    <span className="font-semibold text-blue-700/90">
                       {operario.eficiencia_promedio}%
                     </span>
                   </div>

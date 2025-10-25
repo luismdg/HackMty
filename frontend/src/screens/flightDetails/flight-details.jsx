@@ -55,7 +55,7 @@ export function FlightDetails({ flightId, onBack }) {
     );
 
   return (
-    <div className="min-h-screen bg-[#050B16] text-white p-8 space-y-6 font-sans">
+    <div className="min-h-screen text-white p-8 space-y-6 font-sans">
       {/* Header */}
       <div className="flex items-center gap-4">
         <Button
@@ -79,9 +79,8 @@ export function FlightDetails({ flightId, onBack }) {
       {/* Layout Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Flight Info Card */}
-        <div className="bg-[#0C1526] rounded-lg p-6 shadow-lg space-y-4">
+        <div className="backdrop-blur-3xl bg-blue-300/10 rounded-md p-6 shadow-lg space-y-4">
           <div className="flex items-center gap-3">
-            <span className="text-3xl">{flightDetails.airlineIcon}</span>
             <div>
               <p className="text-xl font-semibold text-[#C8D6E5]">
                 {flightDetails.airline}
@@ -150,9 +149,9 @@ export function FlightDetails({ flightId, onBack }) {
         </div>
 
         {/* Consumption Prediction Table */}
-        <div className="md:col-span-2 bg-[#0C1526] rounded-lg shadow-lg overflow-x-auto">
+        <div className="md:col-span-2 backdrop-blur-3xl bg-slate-900/20 rounded-md shadow-lg overflow-x-auto">
           <table className="w-full text-sm border-collapse">
-            <thead className="bg-[#0D1B2A] text-[#94A3B8] uppercase text-xs">
+            <thead className="backdrop-blur-3xl bg-blue-300/10 text-[#94A3B8] uppercase text-xs">
               <tr>
                 <th className="p-3 text-left">ID</th>
                 <th className="p-3 text-left">Producto</th>
