@@ -12,14 +12,17 @@ export function ProductivityTable({ onOperatorSelect }) {
   const [operatorFilter, setOperatorFilter] = useState("any");
   const [shiftFilter, setShiftFilter] = useState("any");
   const [areaFilter, setAreaFilter] = useState("any");
+  const [cityFilter, setCityFilter] = useState("any");
+  const [availableCities, setAvailableCities] = useState([]);
 
   useEffect(() => {
     async function fetchProductivityData() {
       try {
         setLoading(true);
-        const [sessionsResponse, statsResponse] = await Promise.all([
+        const [sessionsResponse, statsResponse, citiesResponse] = await Promise.all([
           fetch("/productivity/"),
           fetch("/productivity/estadisticas/generales"),
+          fetch("/productivity/ciudades/disponibles")
         ]);
 
         if (!sessionsResponse.ok || !statsResponse.ok) {
@@ -28,6 +31,7 @@ export function ProductivityTable({ onOperatorSelect }) {
 
         const sessionsData = await sessionsResponse.json();
         const statsData = await statsResponse.json();
+        const citiesData = citiesResponse.ok ? await citiesResponse.json() : { ciudades: [] };
 
         const sessionsArray = Object.entries(sessionsData).map(
           ([sessionId, sessionData]) => ({
@@ -39,6 +43,7 @@ export function ProductivityTable({ onOperatorSelect }) {
 
         setSessions(sessionsArray);
         setStatistics(statsData);
+        setAvailableCities(citiesData.ciudades || []);
       } catch (error) {
         console.error("Error fetching productivity data:", error);
         setError("Error al cargar los datos de productividad");
@@ -69,13 +74,15 @@ export function ProductivityTable({ onOperatorSelect }) {
     const matchesSearch =
       session.nombre_operario.toLowerCase().includes(searchTerm.toLowerCase()) ||
       session.puesto.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      session.id.toLowerCase().includes(searchTerm.toLowerCase());
+      session.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      session.ciudad.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesOperator = operatorFilter === "any" || session.nombre_operario === operatorFilter;
     const matchesShift = shiftFilter === "any" || session.turno === shiftFilter;
     const matchesArea = areaFilter === "any" || session.area_trabajo === areaFilter;
+    const matchesCity = cityFilter === "any" || session.ciudad === cityFilter;
 
-    return matchesSearch && matchesOperator && matchesShift && matchesArea;
+    return matchesSearch && matchesOperator && matchesShift && matchesArea && matchesCity;
   });
 
   const handleOperatorClick = (operatorName) => {
@@ -170,13 +177,13 @@ export function ProductivityTable({ onOperatorSelect }) {
 
       {/* Filters */}
       <div className="bg-[#0C1526] p-6 space-y-4 rounded-md">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
           <div>
             <label className="text-xs mb-1.5 block text-[#94A3B8]">
               Buscar operario
             </label>
             <input
-              placeholder="Nombre, puesto o ID"
+              placeholder="Nombre, puesto, ciudad o ID"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full bg-[#09111E] rounded-md px-3 py-2 text-sm text-white placeholder:text-gray-500 focus:ring-1 focus:ring-[#3B82F6] outline-none"
@@ -212,12 +219,28 @@ export function ProductivityTable({ onOperatorSelect }) {
               ))}
             </Select>
           </div>
+          <div>
+            <label className="text-xs mb-1.5 block text-[#94A3B8]">
+              Ciudad
+            </label>
+            <Select value={cityFilter} onValueChange={setCityFilter}>
+              <option value="any">- Cualquiera -</option>
+              {availableCities.map(city => (
+                <option key={city} value={city}>{city}</option>
+              ))}
+            </Select>
+          </div>
         </div>
       </div>
 
       {/* Results Info */}
       <div className="text-xs text-[#64748B]">
         Mostrando {filteredSessions.length} de {sessions.length} resultados.
+        {cityFilter !== "any" && (
+          <span className="ml-2">
+            • Filtrado por ciudad: <span className="text-[#3B82F6]">{cityFilter}</span>
+          </span>
+        )}
       </div>
 
       {/* Productivity Table */}
@@ -227,6 +250,7 @@ export function ProductivityTable({ onOperatorSelect }) {
             <tr>
               <th className="p-3 font-semibold">Operario</th>
               <th className="p-3 font-semibold">Puesto</th>
+              <th className="p-3 font-semibold">Ciudad</th>
               <th className="p-3 font-semibold">Turno</th>
               <th className="p-3 font-semibold">Área</th>
               <th className="p-3 font-semibold text-right">Items/min</th>
@@ -252,6 +276,17 @@ export function ProductivityTable({ onOperatorSelect }) {
                   </div>
                 </td>
                 <td className="p-3 text-[#E2E8F0]">{session.puesto}</td>
+                <td className="p-3">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[#E2E8F0]">{session.ciudad}</span>
+                    <Badge
+                      variant="outline"
+                      className="text-xs bg-[#1E293B] text-[#94A3B8] border-[#374151]"
+                    >
+                      {session.country}
+                    </Badge>
+                  </div>
+                </td>
                 <td className="p-3">
                   <Badge
                     variant="status"
@@ -283,9 +318,16 @@ export function ProductivityTable({ onOperatorSelect }) {
       {/* Top Performers Section */}
       {statistics?.top_operarios && (
         <div className="bg-[#0C1526] p-6 rounded-md">
-          <h2 className="text-xl font-semibold text-[#DFBD69] mb-4">
-            Top Operarios
-          </h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-semibold text-[#DFBD69]">
+              Top Operarios
+            </h2>
+            {cityFilter !== "any" && (
+              <Badge className="bg-[#3B82F6] text-white">
+                Ciudad: {cityFilter}
+              </Badge>
+            )}
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {statistics.top_operarios.slice(0, 3).map((operario, index) => (
               <div
@@ -303,7 +345,7 @@ export function ProductivityTable({ onOperatorSelect }) {
                   <div>
                     <p className="font-semibold text-white">{operario.nombre}</p>
                     <p className="text-xs text-[#94A3B8]">
-                      {operario.areas_trabajo?.join(', ') || 'Múltiples áreas'}
+                      {operario.ciudades?.join(', ') || 'Múltiples ciudades'}
                     </p>
                   </div>
                 </div>
@@ -322,9 +364,50 @@ export function ProductivityTable({ onOperatorSelect }) {
                     <span className="text-[#94A3B8]">Total Items:</span>
                     <span className="text-white">{operario.total_items}</span>
                   </div>
+                  <div className="flex justify-between">
+                    <span className="text-[#94A3B8]">Ubicaciones:</span>
+                    <span className="text-[#C8D6E5] text-xs">
+                      {operario.paises?.join(', ')}
+                    </span>
+                  </div>
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      )}
+
+      {/* City Statistics */}
+      {cityFilter !== "any" && (
+        <div className="bg-[#0C1526] p-6 rounded-md">
+          <h2 className="text-xl font-semibold text-[#DFBD69] mb-4">
+            Estadísticas de {cityFilter}
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="bg-[#09111E] p-4 rounded-md text-center">
+              <p className="text-2xl font-bold text-white">
+                {filteredSessions.length}
+              </p>
+              <p className="text-xs text-[#94A3B8]">Sesiones</p>
+            </div>
+            <div className="bg-[#09111E] p-4 rounded-md text-center">
+              <p className="text-2xl font-bold text-[#3B82F6]">
+                {[...new Set(filteredSessions.map(s => s.nombre_operario))].length}
+              </p>
+              <p className="text-xs text-[#94A3B8]">Operarios</p>
+            </div>
+            <div className="bg-[#09111E] p-4 rounded-md text-center">
+              <p className="text-2xl font-bold text-[#10B981]">
+                {Math.round(filteredSessions.reduce((sum, session) => sum + session.eficiencia_operario, 0) / filteredSessions.length)}%
+              </p>
+              <p className="text-xs text-[#94A3B8]">Eficiencia Promedio</p>
+            </div>
+            <div className="bg-[#09111E] p-4 rounded-md text-center">
+              <p className="text-2xl font-bold text-[#F59E0B]">
+                {Math.round(filteredSessions.reduce((sum, session) => sum + session.tasa_items_por_minuto, 0) / filteredSessions.length)}
+              </p>
+              <p className="text-xs text-[#94A3B8]">Items/min Promedio</p>
+            </div>
           </div>
         </div>
       )}
