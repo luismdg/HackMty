@@ -31,7 +31,7 @@ export function FlightSummary({ onFlightSelect }) {
             country: "USA",
             type:
               flightData.origin.includes("USA") &&
-                flightData.destination.includes("USA")
+              flightData.destination.includes("USA")
                 ? "Domestic"
                 : "International",
             ...flightData,
@@ -72,7 +72,7 @@ export function FlightSummary({ onFlightSelect }) {
     return (
       <div className="p-8 text-white">
         <div className="bg-[#1A2639] border border-[#2C3E50] p-4 mb-4">
-          <p className="text-red-400 font-semibold">⚠️ Error:</p>
+          <p className="text-red-400 font-semibold">Error:</p>
           <p className="text-red-300">{error}</p>
           <p className="text-red-500 text-sm mt-2">
             Mostrando datos de ejemplo...

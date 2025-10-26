@@ -18,11 +18,12 @@ export function ProductivityTable({ onOperatorSelect }) {
     async function fetchProductivityData() {
       try {
         setLoading(true);
-        const [sessionsResponse, statsResponse, citiesResponse] = await Promise.all([
-          fetch("/productivity/"),
-          fetch("/productivity/estadisticas/generales"),
-          fetch("/productivity/ciudades/disponibles")
-        ]);
+        const [sessionsResponse, statsResponse, citiesResponse] =
+          await Promise.all([
+            fetch("/productivity/"),
+            fetch("/productivity/estadisticas/generales"),
+            fetch("/productivity/ciudades/disponibles"),
+          ]);
 
         if (!sessionsResponse.ok || !statsResponse.ok) {
           throw new Error("Error fetching productivity data");
@@ -30,7 +31,9 @@ export function ProductivityTable({ onOperatorSelect }) {
 
         const sessionsData = await sessionsResponse.json();
         const statsData = await statsResponse.json();
-        const citiesData = citiesResponse.ok ? await citiesResponse.json() : { ciudades: [] };
+        const citiesData = citiesResponse.ok
+          ? await citiesResponse.json()
+          : { ciudades: [] };
 
         const sessionsArray = Object.entries(sessionsData).map(
           ([sessionId, sessionData]) => ({
@@ -74,22 +77,36 @@ export function ProductivityTable({ onOperatorSelect }) {
     return colors[rank] || "bg-gray-600 text-white";
   };
 
-  const uniqueOperators = [...new Set(sessions.map(session => session.nombre_operario))];
-  const uniqueAreas = [...new Set(sessions.map(session => session.area_trabajo))];
+  const uniqueOperators = [
+    ...new Set(sessions.map((session) => session.nombre_operario)),
+  ];
+  const uniqueAreas = [
+    ...new Set(sessions.map((session) => session.area_trabajo)),
+  ];
 
   const filteredSessions = sessions.filter((session) => {
     const matchesSearch =
-      session.nombre_operario.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      session.nombre_operario
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
       session.puesto.toLowerCase().includes(searchTerm.toLowerCase()) ||
       session.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
       session.ciudad.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesOperator = operatorFilter === "any" || session.nombre_operario === operatorFilter;
+    const matchesOperator =
+      operatorFilter === "any" || session.nombre_operario === operatorFilter;
     const matchesShift = shiftFilter === "any" || session.turno === shiftFilter;
-    const matchesArea = areaFilter === "any" || session.area_trabajo === areaFilter;
+    const matchesArea =
+      areaFilter === "any" || session.area_trabajo === areaFilter;
     const matchesCity = cityFilter === "any" || session.ciudad === cityFilter;
 
-    return matchesSearch && matchesOperator && matchesShift && matchesArea && matchesCity;
+    return (
+      matchesSearch &&
+      matchesOperator &&
+      matchesShift &&
+      matchesArea &&
+      matchesCity
+    );
   });
 
   const handleOperatorClick = (operatorName) => {
@@ -106,14 +123,14 @@ export function ProductivityTable({ onOperatorSelect }) {
 
   if (loading)
     return (
-      <div className="p-8 text-white">📊 Cargando datos de productividad...</div>
+      <div className="p-8 text-white">Cargando datos de productividad...</div>
     );
 
   if (error)
     return (
       <div className="p-8 text-white">
         <div className="bg-[#1A2639] border border-[#2C3E50] p-4 mb-4">
-          <p className="text-red-400 font-semibold">⚠️ Error:</p>
+          <p className="text-red-400 font-semibold"> Error:</p>
           <p className="text-red-300">{error}</p>
         </div>
       </div>
@@ -139,16 +156,12 @@ export function ProductivityTable({ onOperatorSelect }) {
       </div>
 
       {/* KPI Card */}
-      <div className="bg-[#0C1526] p-6 rounded-md">
+      <div className="bg-[#0C1526] p-6 rounded-md backdrop-blur-3xl bg-blue-300/10">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <div className="col-span-1">
             <div className="flex gap-3">
-              <h3 className="text-lg text-[#DFBD69] mb-4">
-                KPI
-              </h3>
-              <h3 className="text-lg mb-4">
-                Progreso Mensual
-              </h3>
+              <h3 className="text-lg text-[#DFBD69] mb-4">KPI</h3>
+              <h3 className="text-lg mb-4">Progreso Mensual</h3>
             </div>
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
@@ -158,23 +171,36 @@ export function ProductivityTable({ onOperatorSelect }) {
               <div className="flex justify-between text-sm">
                 <span className="text-[#94A3B8]">Actual:</span>
                 <span className="text-[#3B82F6] font-semibold">
-                  {statistics?.estadisticas_generales?.eficiencia_promedio || 0}%
+                  {statistics?.estadisticas_generales?.eficiencia_promedio || 0}
+                  %
                 </span>
               </div>
             </div>
           </div>
           <div className="col-span-3">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-[#94A3B8]">Progreso hacia la meta</span>
+              <span className="text-sm text-[#94A3B8]">
+                Progreso hacia la meta
+              </span>
               <span className="text-sm font-semibold">
-                {Math.round((statistics?.estadisticas_generales?.eficiencia_promedio / 95) * 100)}%
+                {Math.round(
+                  (statistics?.estadisticas_generales?.eficiencia_promedio /
+                    95) *
+                    100
+                )}
+                %
               </span>
             </div>
-            <div className="w-full bg-[#09111E] rounded-full h-3">
+            <div className="w-full bg-[#09111E] rounded-full h-3 ">
               <div
                 className="bg-gradient-to-r from-[#3B82F6] to-[#1D4ED8] h-3 rounded-full transition-all duration-500"
                 style={{
-                  width: `${Math.min(100, (statistics?.estadisticas_generales?.eficiencia_promedio / 95) * 100)}%`
+                  width: `${Math.min(
+                    100,
+                    (statistics?.estadisticas_generales?.eficiencia_promedio /
+                      95) *
+                      100
+                  )}%`,
                 }}
               ></div>
             </div>
@@ -183,7 +209,7 @@ export function ProductivityTable({ onOperatorSelect }) {
       </div>
 
       {/* Filters */}
-      <div className="bg-[#0C1526] p-6 space-y-4 rounded-md">
+      <div className="bg-[#0C1526] p-6 space-y-4 rounded-md backdrop-blur-3xl bg-blue-300/10">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
           <div>
             <label className="text-xs mb-1.5 block text-[#94A3B8]">
@@ -203,11 +229,13 @@ export function ProductivityTable({ onOperatorSelect }) {
             <select
               value={operatorFilter}
               onChange={(e) => setOperatorFilter(e.target.value)}
-              className="w-full bg-[#09111E] rounded-md px-3 py-2 text-sm text-white focus:ring-1 focus:ring-[#3B82F6] outline-none"
+              className="appearance-none bg-transparent border border-[#09111E] flex px-2 py-2 items-center rounded-md text-[#94A3B8] text-sm"
             >
               <option value="any">- Cualquiera -</option>
-              {uniqueOperators.map(operator => (
-                <option key={operator} value={operator}>{operator}</option>
+              {uniqueOperators.map((operator) => (
+                <option key={operator} value={operator}>
+                  {operator}
+                </option>
               ))}
             </select>
           </div>
@@ -216,7 +244,7 @@ export function ProductivityTable({ onOperatorSelect }) {
             <select
               value={shiftFilter}
               onChange={(e) => setShiftFilter(e.target.value)}
-              className="w-full bg-[#09111E] rounded-md px-3 py-2 text-sm text-white focus:ring-1 focus:ring-[#3B82F6] outline-none"
+              className="appearance-none bg-transparent border border-[#09111E] flex px-2 py-2 items-center rounded-md text-[#94A3B8] text-sm"
             >
               <option value="any">- Cualquiera -</option>
               <option value="Matutino">Matutino</option>
@@ -230,11 +258,13 @@ export function ProductivityTable({ onOperatorSelect }) {
             <select
               value={areaFilter}
               onChange={(e) => setAreaFilter(e.target.value)}
-              className="w-full bg-[#09111E] rounded-md px-3 py-2 text-sm text-white focus:ring-1 focus:ring-[#3B82F6] outline-none"
+              className="appearance-none bg-transparent border border-[#09111E] flex py-2 items-center rounded-md text-[#94A3B8] text-sm"
             >
               <option value="any">- Cualquiera -</option>
-              {uniqueAreas.map(area => (
-                <option key={area} value={area}>{area}</option>
+              {uniqueAreas.map((area) => (
+                <option key={area} value={area}>
+                  {area}
+                </option>
               ))}
             </select>
           </div>
@@ -245,11 +275,13 @@ export function ProductivityTable({ onOperatorSelect }) {
             <select
               value={cityFilter}
               onChange={(e) => setCityFilter(e.target.value)}
-              className="w-full bg-[#09111E] rounded-md px-3 py-2 text-sm text-white focus:ring-1 focus:ring-[#3B82F6] outline-none"
+              className="appearance-none bg-transparent border border-[#09111E] flex px-2 py-2 items-center rounded-md text-[#94A3B8] text-sm"
             >
               <option value="any">- Cualquiera -</option>
-              {availableCities.map(city => (
-                <option key={city} value={city}>{city}</option>
+              {availableCities.map((city) => (
+                <option key={city} value={city}>
+                  {city}
+                </option>
               ))}
             </select>
           </div>
@@ -261,16 +293,17 @@ export function ProductivityTable({ onOperatorSelect }) {
         Mostrando {filteredSessions.length} de {sessions.length} resultados.
         {cityFilter !== "any" && (
           <span className="ml-2">
-            • Filtrado por ciudad: <span className="text-[#3B82F6]">{cityFilter}</span>
+            • Filtrado por ciudad:{" "}
+            <span className="text-[#3B82F6]">{cityFilter}</span>
           </span>
         )}
       </div>
 
       {/* Productivity Table */}
-      <div className="overflow-hidden rounded-md">
+      <div className="overflow-hidden rounded-md ">
         <table className="w-full text-left text-sm border-collapse">
           <thead className="bg-[#0D1B2A] text-[#94A3B8] uppercase text-xs">
-            <tr>
+            <tr className="backdrop-blur-3xl bg-blue-300/10">
               <th className="p-3 font-semibold">Operario</th>
               <th className="p-3 font-semibold">Puesto</th>
               <th className="p-3 font-semibold">Ciudad</th>
@@ -290,10 +323,15 @@ export function ProductivityTable({ onOperatorSelect }) {
                 <td className="p-3">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 bg-[#1E293B] rounded-full flex items-center justify-center text-xs font-semibold">
-                      {session.nombre_operario.split(' ').map(n => n[0]).join('')}
+                      {session.nombre_operario
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")}
                     </div>
                     <div>
-                      <p className="text-white font-medium">{session.nombre_operario}</p>
+                      <p className="text-white font-medium">
+                        {session.nombre_operario}
+                      </p>
                       <p className="text-xs text-[#94A3B8]">{session.id}</p>
                     </div>
                   </div>
@@ -313,10 +351,11 @@ export function ProductivityTable({ onOperatorSelect }) {
                 <td className="p-3">
                   <Badge
                     variant="status"
-                    className={`${session.turno === "Matutino"
-                      ? "bg-[#172554] text-[#60A5FA] border border-[#1E40AF]"
-                      : "bg-[#422006] text-[#FDBA74] border border-[#713F12]"
-                      } tracking-wide px-2 py-1 text-xs uppercase`}
+                    className={`${
+                      session.turno === "Matutino"
+                        ? "bg-[#172554] text-[#60A5FA] border border-[#1E40AF]"
+                        : "bg-[#422006] text-[#FDBA74] border border-[#713F12]"
+                    } tracking-wide px-2 py-1 text-xs uppercase`}
                   >
                     {session.turno}
                   </Badge>
@@ -327,7 +366,9 @@ export function ProductivityTable({ onOperatorSelect }) {
                 </td>
                 <td className="p-3 text-center">
                   <div
-                    className={`w-12 h-12 mx-auto rounded-lg border-2 ${getOverallColor(session.scoreGeneral)} flex items-center justify-center text-white font-bold text-sm`}
+                    className={`w-12 h-12 mx-auto rounded-lg border-2 ${getOverallColor(
+                      session.scoreGeneral
+                    )} flex items-center justify-center text-white font-bold text-sm`}
                   >
                     {Math.round(session.scoreGeneral)}
                   </div>
@@ -360,21 +401,24 @@ export function ProductivityTable({ onOperatorSelect }) {
               >
                 <div className="flex items-center gap-3 mb-2">
                   <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-white ${index === 0
-                      ? "bg-yellow-500/50 backdrop-blur-3xl"
-                      : index === 1
+                    className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-white ${
+                      index === 0
+                        ? "bg-yellow-500/50 backdrop-blur-3xl"
+                        : index === 1
                         ? "bg-gray-400/50 backdrop-blur-3xl"
                         : index === 2
-                          ? "bg-orange-500/50 backdrop-blur-3xl"
-                          : "bg-blue-700/50 backdrop-blur-3xl"
-                      }`}
+                        ? "bg-orange-500/50 backdrop-blur-3xl"
+                        : "bg-blue-700/50 backdrop-blur-3xl"
+                    }`}
                   >
                     {index + 1}
                   </div>
                   <div>
-                    <p className="font-semibold text-white">{operario.nombre}</p>
+                    <p className="font-semibold text-white">
+                      {operario.nombre}
+                    </p>
                     <p className="text-xs text-[#94A3B8]">
-                      {operario.ciudades?.join(', ') || 'Múltiples ciudades'}
+                      {operario.ciudades?.join(", ") || "Múltiples ciudades"}
                     </p>
                   </div>
                 </div>
@@ -387,7 +431,9 @@ export function ProductivityTable({ onOperatorSelect }) {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-[#94A3B8]">Sesiones:</span>
-                    <span className="text-white">{operario.total_sesiones}</span>
+                    <span className="text-white">
+                      {operario.total_sesiones}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-[#94A3B8]">Total Items:</span>
@@ -396,7 +442,7 @@ export function ProductivityTable({ onOperatorSelect }) {
                   <div className="flex justify-between">
                     <span className="text-[#94A3B8]">Ubicaciones:</span>
                     <span className="text-[#C8D6E5] text-xs">
-                      {operario.paises?.join(', ')}
+                      {operario.paises?.join(", ")}
                     </span>
                   </div>
                 </div>
@@ -421,19 +467,33 @@ export function ProductivityTable({ onOperatorSelect }) {
             </div>
             <div className="bg-[#09111E] p-4 rounded-md text-center">
               <p className="text-2xl font-bold text-[#3B82F6]">
-                {[...new Set(filteredSessions.map(s => s.nombre_operario))].length}
+                {
+                  [...new Set(filteredSessions.map((s) => s.nombre_operario))]
+                    .length
+                }
               </p>
               <p className="text-xs text-[#94A3B8]">Operarios</p>
             </div>
             <div className="bg-[#09111E] p-4 rounded-md text-center">
               <p className="text-2xl font-bold text-[#10B981]">
-                {Math.round(filteredSessions.reduce((sum, session) => sum + session.eficiencia_operario, 0) / filteredSessions.length)}%
+                {Math.round(
+                  filteredSessions.reduce(
+                    (sum, session) => sum + session.eficiencia_operario,
+                    0
+                  ) / filteredSessions.length
+                )}
+                %
               </p>
               <p className="text-xs text-[#94A3B8]">Eficiencia Promedio</p>
             </div>
             <div className="bg-[#09111E] p-4 rounded-md text-center">
               <p className="text-2xl font-bold text-[#F59E0B]">
-                {Math.round(filteredSessions.reduce((sum, session) => sum + session.tasa_items_por_minuto, 0) / filteredSessions.length)}
+                {Math.round(
+                  filteredSessions.reduce(
+                    (sum, session) => sum + session.tasa_items_por_minuto,
+                    0
+                  ) / filteredSessions.length
+                )}
               </p>
               <p className="text-xs text-[#94A3B8]">Items/min Promedio</p>
             </div>

@@ -1,5 +1,13 @@
 import { useState, useEffect } from "react";
-import { ArrowLeft, Plane, Award, Clock, Users, TrendingUp, MapPin } from "lucide-react";
+import {
+  ArrowLeft,
+  Plane,
+  Award,
+  Clock,
+  Users,
+  TrendingUp,
+  MapPin,
+} from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { Badge } from "../../components/ui/badge";
 
@@ -16,21 +24,26 @@ export function FlightDetails({ flightId, onBack }) {
         setLoading(true);
         setError(null);
 
-        const [detailsResponse, productsResponse, operatorResponse] = await Promise.all([
-          fetch(`/data/${flightId}`),
-          fetch(`/enfoque2/${flightId}/products`),
-          fetch(`/productivity/recomendacion/vuelo/${flightId}`)
-        ]);
+        const [detailsResponse, productsResponse, operatorResponse] =
+          await Promise.all([
+            fetch(`/data/${flightId}`),
+            fetch(`/enfoque2/${flightId}/products`),
+            fetch(`/productivity/recomendacion/vuelo/${flightId}`),
+          ]);
 
         if (!detailsResponse.ok)
-          throw new Error(`Error fetching flight details: ${detailsResponse.status}`);
+          throw new Error(
+            `Error fetching flight details: ${detailsResponse.status}`
+          );
         if (!productsResponse.ok)
-          throw new Error(`Error fetching products: ${productsResponse.status}`);
+          throw new Error(
+            `Error fetching products: ${productsResponse.status}`
+          );
 
         const [detailsData, productsData, operatorData] = await Promise.all([
           detailsResponse.json(),
           productsResponse.json(),
-          operatorResponse.ok ? operatorResponse.json() : null
+          operatorResponse.ok ? operatorResponse.json() : null,
         ]);
 
         setFlightDetails(detailsData);
@@ -55,13 +68,13 @@ export function FlightDetails({ flightId, onBack }) {
     const descriptions = {
       high: "Tripulación de Alta Eficiencia (Vuelos Largos)",
       medium: "Tripulación Estándar (Vuelos Medianos)",
-      low: "Tripulación Básica (Vuelos Cortos)"
+      low: "Tripulación Básica (Vuelos Cortos)",
     };
     return descriptions[crewType];
   };
 
   if (loading)
-    return <div className="p-8 text-white"> ✈️ Cargando datos del vuelo...</div>;
+    return <div className="p-8 text-white"> Cargando datos del vuelo...</div>;
   if (error) return <div className="p-8 text-red-400">{error}</div>;
   if (!flightDetails)
     return (
@@ -83,40 +96,47 @@ export function FlightDetails({ flightId, onBack }) {
           <ArrowLeft className="w-5 h-5" />
         </Button>
         <div>
-          <h1 className="text-2xl font-semibold text-[#DFBD69]">
+          <h1 className="text-3xl font-light tracking-tight text-[#DFBD69]">
             {flightId} - {flightDetails.airline}
           </h1>
-          <p className="text-neutral-400 text-sm">
-            {flightDetails.origin} → {flightDetails.destination} • {flightDetails.duration} hrs
+          <p className="text-neutral-400 mt-1 text-sm">
+            {flightDetails.origin} → {flightDetails.destination} •{" "}
+            {flightDetails.duration} hrs
           </p>
         </div>
       </div>
 
       {/* Main Content - 2 Column Layout */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-
         {/* Left Column - Flight Information */}
         <div className="space-y-6">
           {/* Flight Overview Card */}
-          <div className="bg-[#0C1526] rounded-xl p-6 border border-[#1E293B]">
+          <div className="backdrop-blur-3xl bg-blue-300/10 rounded-xl p-6">
             <div className="flex items-center gap-3 mb-6">
-              <Plane className="w-6 h-6 text-[#3B82F6]" />
-              <h2 className="text-lg font-semibold text-white">Información del Vuelo</h2>
+              <h2 className="text-lg font-semibold text-white">
+                Información del Vuelo
+              </h2>
             </div>
 
             <div className="grid grid-cols-2 gap-6 mb-6">
               <div className="space-y-4">
                 <div>
                   <p className="text-sm text-[#94A3B8]">Aeronave</p>
-                  <p className="text-white font-medium">{flightDetails.aircraft}</p>
+                  <p className="text-white font-medium">
+                    {flightDetails.aircraft}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm text-[#94A3B8]">Capacidad</p>
-                  <p className="text-white font-medium">{flightDetails.maxCapacity} pasajeros</p>
+                  <p className="text-white font-medium">
+                    {flightDetails.maxCapacity} pasajeros
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm text-[#94A3B8]">Tickets Vendidos</p>
-                  <p className="text-[#3B82F6] font-semibold">{flightDetails.ticketsSold}</p>
+                  <p className="text-[#3B82F6] font-semibold">
+                    {flightDetails.ticketsSold}
+                  </p>
                 </div>
               </div>
 
@@ -124,49 +144,68 @@ export function FlightDetails({ flightId, onBack }) {
                 <div>
                   <p className="text-sm text-[#94A3B8]">Duración</p>
                   <div className="flex items-center gap-2">
-                    <Clock className="w-4 h-4 text-[#F59E0B]" />
-                    <p className="text-white font-medium">{flightDetails.duration} horas</p>
+                    <p className="text-white font-medium">
+                      {flightDetails.duration} horas
+                    </p>
                   </div>
                 </div>
                 <div>
                   <p className="text-sm text-[#94A3B8]">Salida</p>
-                  <p className="text-white font-medium">{flightDetails.departureDate}</p>
-                  <p className="text-sm text-[#94A3B8]">{flightDetails.departureTime}</p>
+                  <p className="text-white font-medium">
+                    {flightDetails.departureDate}
+                  </p>
+                  <p className="text-sm text-[#94A3B8]">
+                    {flightDetails.departureTime}
+                  </p>
                 </div>
               </div>
             </div>
 
-            <div className="flex items-center justify-between p-4 bg-[#1E293B] rounded-lg">
+            <div className="flex items-center justify-between p-4 bg-[#0C1526] rounded-lg">
               <div className="text-center">
                 <p className="text-sm text-[#94A3B8]">Origen</p>
-                <p className="text-white font-semibold">{flightDetails.origin}</p>
+                <p className="text-white font-semibold">
+                  {flightDetails.origin}
+                </p>
               </div>
               <Plane className="w-5 h-5 text-[#3B82F6] rotate-90" />
               <div className="text-center">
                 <p className="text-sm text-[#94A3B8]">Destino</p>
-                <p className="text-white font-semibold">{flightDetails.destination}</p>
+                <p className="text-white font-semibold">
+                  {flightDetails.destination}
+                </p>
               </div>
             </div>
           </div>
 
           {/* Recommended Products Card */}
-          <div className="bg-[#0C1526] rounded-xl p-6 border border-[#1E293B]">
+          <div className="backdrop-blur-3xl bg-blue-300/10 rounded-xl p-6">
             <div className="flex items-center gap-3 mb-6">
-              <TrendingUp className="w-6 h-6 text-[#10B981]" />
-              <h2 className="text-lg font-semibold text-white">Productos Sugeridos</h2>
+              <h2 className="text-lg font-semibold text-white">
+                Productos Sugeridos
+              </h2>
             </div>
 
             <div className="space-y-4">
               {products.slice(0, 6).map((product) => (
-                <div key={product.productId} className="flex items-center justify-between p-4 bg-[#1E293B] rounded-lg border border-[#374151]">
+                <div
+                  key={product.productId}
+                  className="flex items-center justify-between p-4 bg-[#0C1526] rounded-lg"
+                >
                   <div className="flex items-center gap-4 flex-1">
                     <div className="text-center">
                       <p className="font-mono text-sm text-[#94A3B8]">ID</p>
-                      <p className="font-mono text-white">{product.productId}</p>
+                      <p className="font-mono text-white">
+                        {product.productId}
+                      </p>
                     </div>
                     <div className="flex-1">
-                      <p className="text-white font-medium">{product.productName}</p>
-                      <p className="text-xs text-[#94A3B8] capitalize">{product.foodType}</p>
+                      <p className="text-white font-medium">
+                        {product.productName}
+                      </p>
+                      <p className="text-xs text-[#94A3B8] capitalize">
+                        {product.foodType}
+                      </p>
                     </div>
                   </div>
 
@@ -174,16 +213,23 @@ export function FlightDetails({ flightId, onBack }) {
                     <div className="flex items-center gap-4">
                       <div>
                         <p className="text-xs text-[#94A3B8]">Sugeridos</p>
-                        <p className="text-[#3B82F6] font-semibold">{product.suggestedUnits}</p>
+                        <p className="text-[#3B82F6] font-semibold">
+                          {product.suggestedUnits}
+                        </p>
                       </div>
                       <div>
                         <p className="text-xs text-[#94A3B8]">Margen</p>
-                        <p className="text-[#10B981] font-semibold">+{product.overloadUnits}</p>
+                        <p className="text-[#10B981] font-semibold">
+                          +{product.overloadUnits}
+                        </p>
                       </div>
                     </div>
                     <p className="text-xs text-[#94A3B8]">
-                      {flightDetails.duration > 3 ? "Extra por vuelo largo" :
-                        flightDetails.duration > 1.5 ? "Stock estándar" : "Mínimo necesario"}
+                      {flightDetails.duration > 3
+                        ? "Extra por vuelo largo"
+                        : flightDetails.duration > 1.5
+                        ? "Stock estándar"
+                        : "Mínimo necesario"}
                     </p>
                   </div>
                 </div>
@@ -195,114 +241,162 @@ export function FlightDetails({ flightId, onBack }) {
         {/* Right Column - Crew Recommendations */}
         <div className="space-y-6">
           {/* Crew Type Indicator */}
-          <div className="bg-[#0C1526] rounded-xl p-6 border border-[#1E293B]">
+          <div className="backdrop-blur-3xl bg-blue-300/10 rounded-xl p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <Users className="w-6 h-6 text-[#DFBD69]" />
                 <div>
-                  <h2 className="text-lg font-semibold text-white">Recomendación de Tripulación</h2>
-                  <p className="text-sm text-[#94A3B8]">{getCrewDescription(crewType)}</p>
+                  <h2 className="text-lg font-semibold text-white">
+                    Recomendación de Tripulación
+                  </h2>
+                  <p className="text-sm text-[#94A3B8]">
+                    {getCrewDescription(crewType)}
+                  </p>
                 </div>
               </div>
-              <Badge className={
-                crewType === "high" ? "bg-green-500/20 text-green-400 border-green-500/30" :
-                  crewType === "medium" ? "bg-yellow-500/20 text-yellow-400 border-yellow-500/30" :
-                    "bg-blue-500/20 text-blue-400 border-blue-500/30"
-              }>
-                {crewType === "high" ? "Alta Demanda" : crewType === "medium" ? "Demanda Media" : "Demanda Baja"}
+              <Badge
+                className={
+                  crewType === "high"
+                    ? "bg-green-500/20 text-green-400 border-green-500/30"
+                    : crewType === "medium"
+                    ? "bg-yellow-500/20 text-yellow-400 rounded-md"
+                    : "bg-blue-500/20 text-blue-400 rounded-md"
+                }
+              >
+                {crewType === "high"
+                  ? "Alta Demanda"
+                  : crewType === "medium"
+                  ? "Demanda Media"
+                  : "Demanda Baja"}
               </Badge>
             </div>
 
             <div className="grid grid-cols-2 gap-4 text-sm">
-              <div className="text-center p-3 bg-[#1E293B] rounded-lg">
+              <div className="text-center p-3 bg-[#0C1526] rounded-lg">
                 <p className="text-[#94A3B8]">Duración del Vuelo</p>
-                <p className="text-white font-semibold text-lg">{flightDetails.duration}h</p>
+                <p className="text-white font-semibold text-lg">
+                  {flightDetails.duration}h
+                </p>
               </div>
-              <div className="text-center p-3 bg-[#1E293B] rounded-lg">
+              <div className="text-center p-3 bg-[#0C1526] rounded-lg">
                 <p className="text-[#94A3B8]">Pasajeros</p>
-                <p className="text-[#3B82F6] font-semibold text-lg">{flightDetails.ticketsSold}</p>
+                <p className="text-[#3B82F6] font-semibold text-lg">
+                  {flightDetails.ticketsSold}
+                </p>
               </div>
             </div>
           </div>
 
           {/* Recommended Operators */}
-          {recommendedOperators && recommendedOperators.recommended_operators && (
-            <div className="bg-[#0C1526] rounded-xl p-6 border border-[#1E293B]">
-              <div className="flex items-center gap-3 mb-6">
-                <Award className="w-6 h-6 text-[#DFBD69]" />
-                <h2 className="text-lg font-semibold text-white">Operarios Recomendados</h2>
-              </div>
+          {recommendedOperators &&
+            recommendedOperators.recommended_operators && (
+              <div className="backdrop-blur-3xl bg-blue-300/10 rounded-xl p-6">
+                <div className="flex items-center gap-3 mb-6">
+                  <h2 className="text-lg font-semibold text-white">
+                    Operarios Recomendados
+                  </h2>
+                </div>
 
-              <div className="space-y-4">
-                {recommendedOperators.recommended_operators.slice(0, 2).map((operator, index) => (
-                  <div key={index} className="p-4 bg-[#1E293B] rounded-lg border border-[#374151]">
-                    <div className="flex items-center gap-4">
-                      {/* Profile Photo Placeholder */}
-                      <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-semibold ${index === 0 ? "bg-gradient-to-br from-[#3B82F6] to-[#1D4ED8]" :
-                        "bg-gradient-to-br from-[#6366F1] to-[#8B5CF6]"
-                        }`}>
-                        {operator.nombre.split(' ').map(n => n[0]).join('')}
-                      </div>
+                <div className="space-y-4">
+                  {recommendedOperators.recommended_operators
+                    .slice(0, 2)
+                    .map((operator, index) => (
+                      <div key={index} className="p-4 bg-[#0C1526] rounded-lg">
+                        <div className="flex items-center gap-4">
+                          {/* Profile Photo Placeholder */}
+                          <div className="w-12 h-12 rounded-full flex items-center justify-center text-white font-semibold bg-slate-700">
+                            {operator.nombre
+                              .split(" ")
+                              .map((n) => n[0])
+                              .join("")}
+                          </div>
 
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <p className="text-white font-semibold">{operator.nombre}</p>
-                          <Badge className={
-                            index === 0 ? "bg-green-500/20 text-green-400" :
-                              "bg-purple-500/20 text-purple-400"
-                          }>
-                            #{index + 1} Recomendado
-                          </Badge>
+                          <div className="flex-1">
+                            <div className="flex items-center gap-3 mb-2">
+                              <p className="text-white font-semibold">
+                                {operator.nombre}
+                              </p>
+                              <Badge
+                                className={
+                                  index === 0
+                                    ? "bg-green-500/20 text-green-400 rounded-md border-none"
+                                    : "bg-purple-500/20 text-purple-400 rounded-md border-none"
+                                }
+                              >
+                                #{index + 1} Recomendado
+                              </Badge>
+                            </div>
+                            <p className="text-sm text-[#94A3B8]">
+                              {operator.puesto}
+                            </p>
+                          </div>
                         </div>
-                        <p className="text-sm text-[#94A3B8]">{operator.puesto}</p>
-                      </div>
-                    </div>
 
-                    <div className="grid grid-cols-3 gap-4 mt-4 text-center">
-                      <div>
-                        <p className="text-xs text-[#94A3B8]">Score</p>
-                        <p className="text-white font-semibold">{operator.score}</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-[#94A3B8]">Eficiencia</p>
-                        <p className="text-[#10B981] font-semibold">{operator.eficiencia_promedio}%</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-[#94A3B8]">Items/min</p>
-                        <p className="text-[#3B82F6] font-semibold">{operator.items_por_minuto_promedio}</p>
-                      </div>
-                    </div>
+                        <div className="grid grid-cols-3 gap-4 mt-4 text-center">
+                          <div>
+                            <p className="text-xs text-[#94A3B8]">Score</p>
+                            <p className="text-white font-semibold">
+                              {operator.score}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-[#94A3B8]">Eficiencia</p>
+                            <p className="text-[#10B981] font-semibold">
+                              {operator.eficiencia_promedio}%
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-[#94A3B8]">Items/min</p>
+                            <p className="text-[#3B82F6] font-semibold">
+                              {operator.items_por_minuto_promedio}
+                            </p>
+                          </div>
+                        </div>
 
-                    {/* Progress Bar for Efficiency */}
-                    <div className="mt-3">
-                      <div className="flex justify-between text-xs mb-1">
-                        <span className="text-[#94A3B8]">Nivel de Eficiencia</span>
-                        <span className="text-white">{operator.eficiencia_promedio}%</span>
+                        {/* Progress Bar for Efficiency */}
+                        <div className="mt-3">
+                          <div className="flex justify-between text-xs mb-1">
+                            <span className="text-[#94A3B8]">
+                              Nivel de Eficiencia
+                            </span>
+                            <span className="text-white">
+                              {operator.eficiencia_promedio}%
+                            </span>
+                          </div>
+                          <div className="w-full bg-[#0C1526] rounded-full h-2">
+                            <div
+                              className={`h-2 rounded-full ${
+                                operator.eficiencia_promedio >= 90
+                                  ? "bg-green-500"
+                                  : operator.eficiencia_promedio >= 80
+                                  ? "bg-yellow-500"
+                                  : operator.eficiencia_promedio >= 70
+                                  ? "bg-orange-500"
+                                  : "bg-red-500"
+                              }`}
+                              style={{
+                                width: `${operator.eficiencia_promedio}%`,
+                              }}
+                            ></div>
+                          </div>
+                        </div>
                       </div>
-                      <div className="w-full bg-[#374151] rounded-full h-2">
-                        <div
-                          className={`h-2 rounded-full ${operator.eficiencia_promedio >= 90 ? "bg-green-500" :
-                            operator.eficiencia_promedio >= 80 ? "bg-yellow-500" :
-                              operator.eficiencia_promedio >= 70 ? "bg-orange-500" : "bg-red-500"
-                            }`}
-                          style={{ width: `${operator.eficiencia_promedio}%` }}
-                        ></div>
-                      </div>
-                    </div>
+                    ))}
+                </div>
+
+                {/* Location Info */}
+                <div className="mt-6 pt-4">
+                  <p className="text-sm text-[#94A3B8] mb-2">
+                    Ubicación de la Tripulación
+                  </p>
+                  <div className="flex items-center gap-2 p-3 bg-[#0C1526] rounded-lg">
+                    <MapPin className="w-4 h-4 text-white" />
+                    <p className="text-white">
+                      {recommendedOperators.recommended_operators[0].ubicacion}
+                    </p>
                   </div>
-                ))}
-              </div>
-
-              {/* Location Info */}
-              <div className="mt-6 pt-4 border-t border-[#1E293B]">
-                <p className="text-sm text-[#94A3B8] mb-2">Ubicación de la Tripulación</p>
-                <div className="flex items-center gap-2 p-3 bg-[#1E293B] rounded-lg">
-                  <MapPin className="w-4 h-4 text-[#EF4444]" />
-                  <p className="text-white">{recommendedOperators.recommended_operators[0].ubicacion}</p>
                 </div>
               </div>
-            </div>
-          )}
+            )}
         </div>
       </div>
     </div>
