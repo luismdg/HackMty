@@ -333,7 +333,7 @@ export function FlightDetails({ flightId, onBack }) {
               <div className="flex items-center gap-3">
                 <div>
                   <h2 className="text-lg font-semibold text-white">
-                    Recomendación de Tripulación
+                    Tripulación Esperada
                   </h2>
                   <p className="text-sm text-[#94A3B8]">
                     {getCrewDescription(crewType)}
@@ -452,12 +452,12 @@ export function FlightDetails({ flightId, onBack }) {
                           <div className="w-full bg-[#0C1526] rounded-full h-2">
                             <div
                               className={`h-2 rounded-full ${operator.eficiencia_promedio >= 90
-                                  ? "bg-green-500"
-                                  : operator.eficiencia_promedio >= 80
-                                    ? "bg-yellow-500"
-                                    : operator.eficiencia_promedio >= 70
-                                      ? "bg-orange-500"
-                                      : "bg-red-500"
+                                ? "bg-green-500"
+                                : operator.eficiencia_promedio >= 80
+                                  ? "bg-yellow-500"
+                                  : operator.eficiencia_promedio >= 70
+                                    ? "bg-orange-500"
+                                    : "bg-red-500"
                                 }`}
                               style={{
                                 width: `${operator.eficiencia_promedio}%`,

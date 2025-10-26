@@ -6,6 +6,7 @@ import { ProductivityTable } from "./screens/productivity/productivity";
 import { ProductivityDetails } from "./screens/productivity/productivityDetails";
 import { ProductsTable } from "./screens/products/products";
 import { ProductsDetails } from "./screens/products/productsDetails";
+import { Chatbot } from "./screens/chatbot/chatbot";
 
 export default function Home() {
   const [selectedFlight, setSelectedFlight] = useState(null);
@@ -45,6 +46,9 @@ export default function Home() {
         } else {
           return <ProductsTable onProductSelect={setSelectedProduct} />;
         }
+
+      case "chatbot":
+        return <Chatbot />;
 
       default:
         if (selectedFlight) {

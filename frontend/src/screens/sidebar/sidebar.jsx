@@ -1,4 +1,4 @@
-import { Plane, Settings, LogOut, BarChart3, Package, ChevronDown, User, Building2, Shield } from "lucide-react";
+import { Plane, Settings, LogOut, BarChart3, Package, ChevronDown, User, Building2, Shield, MessageCircle } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { useState } from "react";
 
@@ -128,7 +128,7 @@ export function Sidebar({ currentSection, onSectionChange }) {
 
       {/* Menu Sections */}
       <nav className="flex-1 p-4 space-y-2">
-        <div className="space-y-1 w-full">
+        <div className="space-y-1 flex flex-col mt-[10px] gap-3 h-full w-full">
           {/* Flight Consumption Predictor */}
           <Button
             variant={currentSection === "flights" ? "default" : "ghost"}
@@ -160,6 +160,17 @@ export function Sidebar({ currentSection, onSectionChange }) {
           >
             <Package className="w-4 h-4 mr-3" />
             Productos
+          </Button>
+
+          {/* Chatbot Assistant */}
+          <Button
+            variant={currentSection === "chatbot" ? "default" : "ghost"}
+            className={`w-full justify-start text-white hover:text-[#DFBD69] hover:rounded-sm ${currentSection === "chatbot" ? "bg-[#11233F] text-[#DFBD69]" : ""
+              }`}
+            onClick={() => onSectionChange("chatbot")}
+          >
+            <MessageCircle className="w-4 h-4 mr-3" />
+            Asistente IA
           </Button>
         </div>
       </nav>

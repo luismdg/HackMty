@@ -161,12 +161,12 @@ export function ProductivityTable({ onOperatorSelect }) {
           <div className="col-span-1">
             <div className="flex gap-3">
               <h3 className="text-lg text-[#DFBD69] mb-4">KPI</h3>
-              <h3 className="text-lg mb-4">Progreso Mensual</h3>
+              <h3 className="text-lg mb-4">Progreso de Capacitación</h3>
             </div>
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="text-[#94A3B8]">Meta:</span>
-                <span className="text-white">95% eficiencia</span>
+                <span className="text-white">100% progreso</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-[#94A3B8]">Actual:</span>
@@ -186,7 +186,7 @@ export function ProductivityTable({ onOperatorSelect }) {
                 {Math.round(
                   (statistics?.estadisticas_generales?.eficiencia_promedio /
                     95) *
-                    100
+                  100
                 )}
                 %
               </span>
@@ -199,7 +199,7 @@ export function ProductivityTable({ onOperatorSelect }) {
                     100,
                     (statistics?.estadisticas_generales?.eficiencia_promedio /
                       95) *
-                      100
+                    100
                   )}%`,
                 }}
               ></div>
@@ -351,11 +351,10 @@ export function ProductivityTable({ onOperatorSelect }) {
                 <td className="p-3">
                   <Badge
                     variant="status"
-                    className={`${
-                      session.turno === "Matutino"
-                        ? "bg-[#172554] text-[#60A5FA] border border-[#1E40AF]"
-                        : "bg-[#422006] text-[#FDBA74] border border-[#713F12]"
-                    } tracking-wide px-2 py-1 text-xs uppercase`}
+                    className={`${session.turno === "Matutino"
+                      ? "bg-[#172554] text-[#60A5FA] border border-[#1E40AF]"
+                      : "bg-[#422006] text-[#FDBA74] border border-[#713F12]"
+                      } tracking-wide px-2 py-1 text-xs uppercase`}
                   >
                     {session.turno}
                   </Badge>
@@ -401,15 +400,14 @@ export function ProductivityTable({ onOperatorSelect }) {
               >
                 <div className="flex items-center gap-3 mb-2">
                   <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-white ${
-                      index === 0
-                        ? "bg-yellow-500/50 backdrop-blur-3xl"
-                        : index === 1
+                    className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-white ${index === 0
+                      ? "bg-yellow-500/50 backdrop-blur-3xl"
+                      : index === 1
                         ? "bg-gray-400/50 backdrop-blur-3xl"
                         : index === 2
-                        ? "bg-orange-500/50 backdrop-blur-3xl"
-                        : "bg-blue-700/50 backdrop-blur-3xl"
-                    }`}
+                          ? "bg-orange-500/50 backdrop-blur-3xl"
+                          : "bg-blue-700/50 backdrop-blur-3xl"
+                      }`}
                   >
                     {index + 1}
                   </div>

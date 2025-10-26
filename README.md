@@ -46,6 +46,7 @@ Go to project folder:
 ```bash
 cd frontend
 npm install lucide-react
+npm install @google/genai
 npm start
 ```
 The frontend should now be running at http://localhost:3000

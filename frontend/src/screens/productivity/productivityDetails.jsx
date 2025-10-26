@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   ArrowLeft,
   User,
@@ -24,6 +24,17 @@ export function ProductivityDetails({ operatorName, onBack }) {
   const [cityStats, setCityStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (videoRef.current) {
+        videoRef.current.play();
+      }
+    }, 3000); // ⏱ 3000 ms = 3 segundos
+
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     async function fetchOperatorData() {
@@ -229,14 +240,13 @@ export function ProductivityDetails({ operatorName, onBack }) {
                         objectiveKPI.current >= 90
                           ? "#10B981"
                           : objectiveKPI.current >= 80
-                          ? "#F59E0B"
-                          : "#EF4444"
+                            ? "#F59E0B"
+                            : "#EF4444"
                       }
                       strokeWidth="12"
                       fill="none"
-                      strokeDasharray={`${
-                        (objectiveKPI.current / 100) * 553
-                      } 553`}
+                      strokeDasharray={`${(objectiveKPI.current / 100) * 553
+                        } 553`}
                       strokeLinecap="round"
                       className="transition-all duration-1000"
                     />
@@ -431,11 +441,10 @@ export function ProductivityDetails({ operatorName, onBack }) {
                 stroke="#10B981"
                 strokeWidth="8"
                 fill="none"
-                strokeDasharray={`${
-                  (operatorData.totalItems /
-                    (operatorData.totalSessions * 200)) *
+                strokeDasharray={`${(operatorData.totalItems /
+                  (operatorData.totalSessions * 200)) *
                   251
-                } 251`}
+                  } 251`}
                 strokeLinecap="round"
                 className="transition-all duration-1000"
               />
@@ -481,31 +490,27 @@ export function ProductivityDetails({ operatorName, onBack }) {
                 </linearGradient>
               </defs>
               <path
-                d={`M 0,${
-                  100 - (sessions[0]?.tasa_items_por_minuto || 0) * 10
-                } ${sessions
-                  .slice(0, 8)
-                  .map(
-                    (s, i) =>
-                      `L ${(i + 1) * (200 / 8)},${
-                        100 - s.tasa_items_por_minuto * 10
-                      }`
-                  )
-                  .join(" ")} L 200,100 L 0,100 Z`}
+                d={`M 0,${100 - (sessions[0]?.tasa_items_por_minuto || 0) * 10
+                  } ${sessions
+                    .slice(0, 8)
+                    .map(
+                      (s, i) =>
+                        `L ${(i + 1) * (200 / 8)},${100 - s.tasa_items_por_minuto * 10
+                        }`
+                    )
+                    .join(" ")} L 200,100 L 0,100 Z`}
                 fill="url(#areaGradient)"
               />
               <path
-                d={`M 0,${
-                  100 - (sessions[0]?.tasa_items_por_minuto || 0) * 10
-                } ${sessions
-                  .slice(0, 8)
-                  .map(
-                    (s, i) =>
-                      `L ${(i + 1) * (200 / 8)},${
-                        100 - s.tasa_items_por_minuto * 10
-                      }`
-                  )
-                  .join(" ")}`}
+                d={`M 0,${100 - (sessions[0]?.tasa_items_por_minuto || 0) * 10
+                  } ${sessions
+                    .slice(0, 8)
+                    .map(
+                      (s, i) =>
+                        `L ${(i + 1) * (200 / 8)},${100 - s.tasa_items_por_minuto * 10
+                        }`
+                    )
+                    .join(" ")}`}
                 stroke="#F59E0B"
                 strokeWidth="2"
                 fill="none"
@@ -540,15 +545,14 @@ export function ProductivityDetails({ operatorName, onBack }) {
                   operatorData.avgPrecision >= 90
                     ? "#10B981"
                     : operatorData.avgPrecision >= 75
-                    ? "#F59E0B"
-                    : "#EF4444"
+                      ? "#F59E0B"
+                      : "#EF4444"
                 }
                 strokeWidth="8"
                 fill="none"
                 strokeLinecap="round"
-                strokeDasharray={`${
-                  (operatorData.avgPrecision / 100) * 126
-                } 126`}
+                strokeDasharray={`${(operatorData.avgPrecision / 100) * 126
+                  } 126`}
                 className="transition-all duration-1000"
               />
               <circle
@@ -580,18 +584,15 @@ export function ProductivityDetails({ operatorName, onBack }) {
         </div>
 
         <div className="aspect-video bg-[#0C1526] relative flex items-center justify-center">
-          {/* Placeholder para video */}
-          <div className="text-center">
-            <p className="text-[#94A3B8]">Video no disponible</p>
-            <p className="text-sm text-[#64748B] mt-1">
-              El video de esta sesión se cargará aquí
-            </p>
-          </div>
-
-          {/* Aquí se puede integrar un video player cuando esté disponible */}
-          {/* <video className="w-full h-full" controls>
-            <source src="/path/to/video.mp4" type="video/mp4" />
-          </video> */}
+          <video
+            ref={videoRef}
+            className="w-full h-full"
+            muted
+            controls
+            preload="auto"
+          >
+            <source src="/Demo-FlightFlow.mp4" type="video/mp4" />
+          </video>
         </div>
       </div>
 
@@ -645,11 +646,10 @@ export function ProductivityDetails({ operatorName, onBack }) {
                     <span className="text-[#94A3B8]">Turno</span>
                     <Badge
                       variant="status"
-                      className={`${
-                        session.turno === "Matutino"
-                          ? "bg-[#172554] text-[#60A5FA]"
-                          : "bg-[#422006] text-[#DFBD69]"
-                      } text-xs`}
+                      className={`${session.turno === "Matutino"
+                        ? "bg-[#172554] text-[#60A5FA]"
+                        : "bg-[#422006] text-[#DFBD69]"
+                        } text-xs`}
                     >
                       {session.turno}
                     </Badge>

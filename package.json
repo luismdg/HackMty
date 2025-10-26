@@ -17,6 +17,7 @@
     "concurrently": "^9.2.0"
   },
   "dependencies": {
+    "@google/genai": "^1.27.0",
     "leaflet": "^1.9.4",
     "maplibre-gl": "^5.7.1",
     "react-leaflet": "^5.0.0"
