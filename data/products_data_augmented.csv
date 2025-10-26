@@ -1,0 +1,18 @@
+unit_cost,tipo_servicio,vida_util_dias,precio_consumidor,reusable,aerolinea,tipo,standard_quantity,units_returned,units_consumed,suggested_units,overload_units,freshness_score,acceptance_rate,expiring_status,Category,Supplier,Storage_Temperature,Batch_Number,Quality_Status,Restock_Level,CO2_Footprint,Storage_Location,Stock_Status,Passenger_Count
+1.5,retail,180,3.5,FALSE,American Airlines,beverage,350,45,305,320,30,92.8,87.1,normal,Canned,Coca-Cola FEMSA,Ambient,B231201B,Good,255,2.04,MX-CEN-01,Adequate,400
+2.5,pick & pack,365,5,TRUE,American Airlines,beverage,400,120,280,300,20,95.6,70,ok,Produce,Herdez,Frozen,B236698B,Good,130,4.64,MX-CEN-01,Low,450
+0.8,retail,365,2,FALSE,Delta Airlines,beverage,280,35,245,260,20,96.2,87.5,ok,Bakery,La Costeña,Frozen,B237645B,Under Review,469,3.66,PUE-WH-2,Overstocked,320
+0.6,retail,365,1.8,FALSE,United Airlines,beverage,320,40,280,300,20,94.8,87.5,ok,Canned,Bimbo,Frozen,B240192B,Damaged,99,1.7,GDL-WH-1,Overstocked,350
+1.2,retail,90,3,FALSE,American Airlines,beverage,300,50,250,270,30,88.9,83.3,warning,Dairy,Lala,Refrigerated,B247641A,Good,409,2.9,GDL-WH-1,Adequate,350
+0.4,pick & pack,540,1.5,TRUE,Delta Airlines,beverage,150,20,130,140,10,97.8,86.7,ok,Condiment,Herdez,Frozen,B247940C,Damaged,437,2.65,MX-CEN-01,Low,180
+2,retail,120,4.5,FALSE,American Airlines,snack,300,55,245,270,30,91.7,81.7,normal,Bakery,Herdez,Refrigerated,B235891C,Damaged,51,4.81,GDL-WH-1,Overstocked,350
+1.8,retail,180,4,FALSE,United Airlines,snack,250,30,220,240,20,93.3,88,normal,Bakery,Bimbo,Refrigerated,B244202C,Damaged,439,4.24,GDL-WH-1,Adequate,280
+2.2,retail,90,4.8,FALSE,Delta Airlines,snack,200,25,175,190,15,87.8,87.5,warning,Canned,Lala,Frozen,B247957A,Good,103,3.76,MX-CEN-01,Overstocked,230
+3.5,retail,270,7,FALSE,American Airlines,snack,180,20,160,170,10,96.3,88.9,ok,Snack,La Costeña,Refrigerated,B235539C,Damaged,155,2.74,GDL-WH-1,Overstocked,200
+4,pick & pack,60,8.5,FALSE,United Airlines,snack,150,15,135,140,10,85,90,warning,Dairy,Nestlé México,Frozen,B231050C,Good,309,2.98,TLC-WH-4,Low,180
+1.5,pick & pack,2,3.5,FALSE,Delta Airlines,snack,220,30,190,200,20,75,86.4,critical,Canned,Lala,Frozen,B248903A,Damaged,359,4.83,MTY-WH-3,Overstocked,250
+8.5,pick & pack,3,15,FALSE,American Airlines,main_meal,280,35,245,260,20,66.7,87.5,critical,Dairy,Bimbo,Ambient,B250533C,Under Review,240,3.07,MTY-WH-3,Low,320
+7.8,pick & pack,2,14,FALSE,United Airlines,main_meal,240,25,215,230,15,50,89.6,critical,Dairy,Herdez,Frozen,B239559A,Under Review,451,1.45,MX-CEN-01,Overstocked,280
+6.5,pick & pack,2,12,FALSE,Delta Airlines,main_meal,200,20,180,190,10,60,90,critical,Condiment,La Costeña,Ambient,B231560A,Good,267,1.55,PUE-WH-2,Adequate,230
+5.5,pick & pack,2,10,FALSE,American Airlines,main_meal,260,30,230,245,15,55,88.5,critical,Bakery,Lala,Frozen,B233788B,Under Review,93,0.91,MX-CEN-01,Overstocked,300
+7.2,pick & pack,2,13,FALSE,United Airlines,main_meal,220,25,195,205,15,45,88.6,critical,Produce,Nestlé México,Frozen,B236272C,Under Review,211,0.18,PUE-WH-2,Low,250

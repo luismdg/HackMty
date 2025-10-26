@@ -14,6 +14,7 @@ import { Badge } from "../../components/ui/badge";
 export function FlightDetails({ flightId, onBack }) {
   const [flightDetails, setFlightDetails] = useState(null);
   const [products, setProducts] = useState([]);
+  const [consumptionPredictions, setConsumptionPredictions] = useState([]);
   const [recommendedOperators, setRecommendedOperators] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -24,10 +25,11 @@ export function FlightDetails({ flightId, onBack }) {
         setLoading(true);
         setError(null);
 
-        const [detailsResponse, productsResponse, operatorResponse] =
+        const [detailsResponse, productsResponse, predictionResponse, operatorResponse] =
           await Promise.all([
             fetch(`/data/${flightId}`),
-            fetch(`/enfoque2/${flightId}/products`),
+            fetch(`/products/all`),
+            fetch(`/prediction/flight-recommendation/${flightId}`),
             fetch(`/productivity/recomendacion/vuelo/${flightId}`),
           ]);
 
@@ -40,14 +42,16 @@ export function FlightDetails({ flightId, onBack }) {
             `Error fetching products: ${productsResponse.status}`
           );
 
-        const [detailsData, productsData, operatorData] = await Promise.all([
+        const [detailsData, productsData, predictionData, operatorData] = await Promise.all([
           detailsResponse.json(),
           productsResponse.json(),
+          predictionResponse.ok ? predictionResponse.json() : null,
           operatorResponse.ok ? operatorResponse.json() : null,
         ]);
 
         setFlightDetails(detailsData);
-        setProducts(productsData);
+        setProducts(productsData.products || []);
+        setConsumptionPredictions(predictionData || {});
         setRecommendedOperators(operatorData);
       } catch (err) {
         console.error(err);
@@ -73,6 +77,55 @@ export function FlightDetails({ flightId, onBack }) {
     return descriptions[crewType];
   };
 
+  // Función para obtener justificación basada en la predicción
+  const getConsumptionJustification = (product, prediction) => {
+    const duration = flightDetails?.duration || 0;
+    const acceptanceRate = prediction?.metrics?.acceptance_rate || 0;
+
+    if (duration > 3) {
+      return "Extra por vuelo largo + alta demanda";
+    } else if (duration > 1.5) {
+      if (acceptanceRate > 80) {
+        return "Stock estándar + alta aceptación";
+      } else if (acceptanceRate > 60) {
+        return "Stock estándar + aceptación media";
+      } else {
+        return "Stock ajustado + baja aceptación";
+      }
+    } else {
+      return "Mínimo necesario + vuelo corto";
+    }
+  };
+
+  // Función para obtener cantidad sugerida basada en predicción
+  const getSuggestedQuantity = (product, prediction) => {
+    if (prediction && prediction.prediction) {
+      return Math.round(prediction.prediction.suggested_units);
+    }
+    // Fallback a datos del producto si no hay predicción
+    return product.suggested_units || product.standard_quantity;
+  };
+
+  // Función para obtener margen basado en predicción
+  const getOverloadQuantity = (product, prediction) => {
+    if (prediction && prediction.prediction) {
+      return Math.round(prediction.prediction.overload_units);
+    }
+    // Fallback a datos del producto si no hay predicción
+    return product.overload_units || 0;
+  };
+
+  // Obtener productos principales para mostrar (bebidas y snacks)
+  const getMainProducts = () => {
+    return products
+      .filter(product =>
+        product.tipo === 'beverage' ||
+        product.tipo === 'snack' ||
+        product.tipo === 'main_meal'
+      )
+      .slice(0, 6);
+  };
+
   if (loading)
     return <div className="p-8 text-white"> Cargando datos del vuelo...</div>;
   if (error) return <div className="p-8 text-red-400">{error}</div>;
@@ -82,6 +135,7 @@ export function FlightDetails({ flightId, onBack }) {
     );
 
   const crewType = getCrewType(flightDetails.duration);
+  const mainProducts = getMainProducts();
 
   return (
     <div className="min-h-screen text-white p-6 space-y-6 font-sans">
@@ -184,57 +238,90 @@ export function FlightDetails({ flightId, onBack }) {
               <h2 className="text-lg font-semibold text-white">
                 Productos Sugeridos
               </h2>
+              {consumptionPredictions.metrics && (
+                <Badge className="bg-green-500/20 text-green-400 border-green-500/30 ml-auto">
+                  {consumptionPredictions.metrics.acceptance_rate}% Tasa Aceptación
+                </Badge>
+              )}
             </div>
 
             <div className="space-y-4">
-              {products.slice(0, 6).map((product) => (
-                <div
-                  key={product.productId}
-                  className="flex items-center justify-between p-4 bg-[#0C1526] rounded-lg"
-                >
-                  <div className="flex items-center gap-4 flex-1">
-                    <div className="text-center">
-                      <p className="font-mono text-sm text-[#94A3B8]">ID</p>
-                      <p className="font-mono text-white">
-                        {product.productId}
-                      </p>
+              {mainProducts.map((product) => {
+                const suggestedQty = getSuggestedQuantity(product, consumptionPredictions);
+                const overloadQty = getOverloadQuantity(product, consumptionPredictions);
+                const justification = getConsumptionJustification(product, consumptionPredictions);
+
+                return (
+                  <div
+                    key={product.product_id || product.productId}
+                    className="flex items-center justify-between p-4 bg-[#0C1526] rounded-lg"
+                  >
+                    <div className="flex items-center gap-4 flex-1">
+                      <div className="text-center">
+                        <p className="font-mono text-sm text-[#94A3B8]">ID</p>
+                        <p className="font-mono text-white">
+                          {product.product_id || product.productId}
+                        </p>
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-white font-medium">
+                          {product.product_name || product.productName}
+                        </p>
+                        <p className="text-xs text-[#94A3B8] capitalize">
+                          {product.tipo}
+                        </p>
+                      </div>
                     </div>
-                    <div className="flex-1">
-                      <p className="text-white font-medium">
-                        {product.productName}
-                      </p>
-                      <p className="text-xs text-[#94A3B8] capitalize">
-                        {product.foodType}
+
+                    <div className="text-right space-y-1">
+                      <div className="flex items-center gap-4">
+                        <div>
+                          <p className="text-xs text-[#94A3B8]">Sugeridos</p>
+                          <p className="text-[#3B82F6] font-semibold">
+                            {suggestedQty}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-[#94A3B8]">Margen</p>
+                          <p className="text-[#10B981] font-semibold">
+                            +{overloadQty}
+                          </p>
+                        </div>
+                      </div>
+                      <p className="text-xs text-[#94A3B8] max-w-[150px]">
+                        {justification}
                       </p>
                     </div>
                   </div>
+                );
+              })}
+            </div>
 
-                  <div className="text-right space-y-1">
-                    <div className="flex items-center gap-4">
-                      <div>
-                        <p className="text-xs text-[#94A3B8]">Sugeridos</p>
-                        <p className="text-[#3B82F6] font-semibold">
-                          {product.suggestedUnits}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-[#94A3B8]">Margen</p>
-                        <p className="text-[#10B981] font-semibold">
-                          +{product.overloadUnits}
-                        </p>
-                      </div>
-                    </div>
-                    <p className="text-xs text-[#94A3B8]">
-                      {flightDetails.duration > 3
-                        ? "Extra por vuelo largo"
-                        : flightDetails.duration > 1.5
-                        ? "Stock estándar"
-                        : "Mínimo necesario"}
+            {/* Información de Predicción */}
+            {consumptionPredictions.prediction && (
+              <div className="mt-6 pt-4 border-t border-[#1E293B]">
+                <div className="grid grid-cols-3 gap-4 text-center">
+                  <div>
+                    <p className="text-xs text-[#94A3B8]">Total Sugerido</p>
+                    <p className="text-[#3B82F6] font-semibold">
+                      {consumptionPredictions.prediction.total_required}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-[#94A3B8]">Eficiencia</p>
+                    <p className="text-[#10B981] font-semibold">
+                      {consumptionPredictions.metrics?.efficiency_score}%
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-[#94A3B8]">Confianza</p>
+                    <p className="text-[#F59E0B] font-semibold capitalize">
+                      {consumptionPredictions.recommendations?.confidence_level}
                     </p>
                   </div>
                 </div>
-              ))}
-            </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -258,15 +345,15 @@ export function FlightDetails({ flightId, onBack }) {
                   crewType === "high"
                     ? "bg-green-500/20 text-green-400 border-green-500/30"
                     : crewType === "medium"
-                    ? "bg-yellow-500/20 text-yellow-400 rounded-md"
-                    : "bg-blue-500/20 text-blue-400 rounded-md"
+                      ? "bg-yellow-500/20 text-yellow-400 rounded-md"
+                      : "bg-blue-500/20 text-blue-400 rounded-md"
                 }
               >
                 {crewType === "high"
                   ? "Alta Demanda"
                   : crewType === "medium"
-                  ? "Demanda Media"
-                  : "Demanda Baja"}
+                    ? "Demanda Media"
+                    : "Demanda Baja"}
               </Badge>
             </div>
 
@@ -364,15 +451,14 @@ export function FlightDetails({ flightId, onBack }) {
                           </div>
                           <div className="w-full bg-[#0C1526] rounded-full h-2">
                             <div
-                              className={`h-2 rounded-full ${
-                                operator.eficiencia_promedio >= 90
+                              className={`h-2 rounded-full ${operator.eficiencia_promedio >= 90
                                   ? "bg-green-500"
                                   : operator.eficiencia_promedio >= 80
-                                  ? "bg-yellow-500"
-                                  : operator.eficiencia_promedio >= 70
-                                  ? "bg-orange-500"
-                                  : "bg-red-500"
-                              }`}
+                                    ? "bg-yellow-500"
+                                    : operator.eficiencia_promedio >= 70
+                                      ? "bg-orange-500"
+                                      : "bg-red-500"
+                                }`}
                               style={{
                                 width: `${operator.eficiencia_promedio}%`,
                               }}

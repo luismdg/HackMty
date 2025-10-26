@@ -4,12 +4,11 @@ import pandas as pd
 import os
 from typing import Dict, Any, List, Optional
 
-# Cambia el prefix a /products en lugar de /expiration
 router = APIRouter(prefix="/products", tags=["Products Management"])
 
 def load_products_data_from_csv() -> List[Dict[str, Any]]:
     """
-    Carga los datos de productos desde el archivo CSV
+    Carga los datos de productos desde el archivo CSV aumentado
     """
     try:
         # Construir la ruta al archivo CSV
@@ -19,10 +18,10 @@ def load_products_data_from_csv() -> List[Dict[str, Any]]:
         project_root = os.path.dirname(backend_dir)  # Salir de backend al root del proyecto
         data_dir = os.path.join(project_root, 'data')  # Entrar a data
         
-        csv_path = os.path.join(data_dir, 'products_data.csv')
+        csv_path = os.path.join(data_dir, 'products_data_augmented.csv')
         csv_path = os.path.abspath(csv_path)  # Normalizar la ruta
         
-        print(f"=== PRODUCTS DEBUG INFO ===")
+        print(f"=== PRODUCTS AUGMENTED DEBUG INFO ===")
         print(f"Ruta construida del CSV: {csv_path}")
         print(f"¿Existe el directorio data?: {os.path.exists(data_dir)}")
         print(f"¿Existe el archivo CSV?: {os.path.exists(csv_path)}")
@@ -32,24 +31,40 @@ def load_products_data_from_csv() -> List[Dict[str, Any]]:
         
         # Leer el CSV
         df = pd.read_csv(csv_path)
-        print(f"CSV leído correctamente. Filas: {len(df)}")
+        print(f"CSV aumentado leído correctamente. Filas: {len(df)}")
         print(f"Columnas: {df.columns.tolist()}")
         print("=================================")
         
-        # Convertir a lista de diccionarios
-        products_data = df.to_dict('records')
+        # Convertir a lista de diccionarios y agregar IDs y nombres generados
+        products_data = []
+        for index, row in df.iterrows():
+            product_dict = row.to_dict()
+            
+            # Generar ID único basado en el índice y datos del producto
+            product_id = f"prod-{index:03d}-{product_dict['aerolinea'].replace(' ', '').lower()}"
+            
+            # Generar nombre descriptivo basado en categoría y tipo
+            category = product_dict.get('Category', 'Producto')
+            product_type = product_dict.get('tipo', 'General')
+            airline = product_dict.get('aerolinea', 'Aerolínea')
+            product_name = f"{category} {product_type} - {airline}"
+            
+            # Agregar campos generados
+            product_dict['product_id'] = product_id
+            product_dict['product_name'] = product_name
+            product_dict['nombre_producto'] = product_name
+            product_dict['id'] = product_id
+            
+            products_data.append(product_dict)
+        
         return products_data
         
     except FileNotFoundError as e:
-        error_msg = f"Archivo CSV de productos no encontrado: {str(e)}"
-        print(error_msg)
-        raise HTTPException(status_code=500, detail=error_msg)
-    except KeyError as e:
-        error_msg = f"Columna faltante en CSV de productos: {str(e)}"
+        error_msg = f"Archivo CSV de productos aumentado no encontrado: {str(e)}"
         print(error_msg)
         raise HTTPException(status_code=500, detail=error_msg)
     except Exception as e:
-        error_msg = f"Error leyendo CSV de productos: {str(e)}"
+        error_msg = f"Error leyendo CSV de productos aumentado: {str(e)}"
         print(error_msg)
         raise HTTPException(status_code=500, detail=error_msg)
 
@@ -161,7 +176,7 @@ def get_expiration_alerts(
                 # Aplicar filtros adicionales
                 if estado and expiration_metrics['estado_expiracion'] != estado:
                     continue
-                if categoria and product.get('tipo') != categoria:
+                if categoria and product.get('Category') != categoria:
                     continue
                 
                 alert_products.append(enriched_product)
@@ -190,7 +205,7 @@ def get_expiration_analysis_by_category():
         # Agrupar por categoría
         categories = {}
         for product in products_data:
-            categoria = product.get('tipo', 'Sin categoría')
+            categoria = product.get('Category', 'Sin categoría')
             if categoria not in categories:
                 categories[categoria] = {
                     'total_products': 0,
@@ -259,7 +274,7 @@ def get_expiration_analysis_by_airline():
             
             airlines[airline]['total_products'] += 1
             airlines[airline]['avg_freshness_score'] += expiration_metrics['porcentaje_vida_util']
-            airlines[airline]['categories'].add(product.get('tipo', 'Sin categoría'))
+            airlines[airline]['categories'].add(product.get('Category', 'Sin categoría'))
             
             # Contar productos en riesgo
             if expiration_metrics['estado_expiracion'] in ['CRITICO', 'EXPIRADO']:
@@ -349,7 +364,7 @@ def get_expiration_dashboard_stats():
         products_data = load_products_data_from_csv()
         
         total_products = len(products_data)
-        total_categories = len(set(p.get('tipo') for p in products_data))
+        total_categories = len(set(p.get('Category') for p in products_data))
         total_airlines = len(set(p.get('aerolinea') for p in products_data))
         
         # Calcular productos por estado
