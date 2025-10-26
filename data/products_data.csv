@@ -1,18 +1,18 @@
-product_id,product_name,unit_cost,tipo_servicio,vida_util_dias,precio_consumidor,reusable,aerolinea,tipo,standard_quantity,units_returned,units_consumed,suggested_units,overload_units
-BEV001,Coca-Cola,1.5,retail,180,3.5,False,American Airlines,beverage,350,45,305,320,30
-BEV002,Coffee,2.5,pick & pack,365,5.0,True,American Airlines,beverage,400,120,280,300,20
-BEV003,Sparkling Water 330ml,0.8,retail,365,2.0,False,Delta Airlines,beverage,280,35,245,260,20
-BEV004,Still Water 500ml,0.6,retail,365,1.8,False,United Airlines,beverage,320,40,280,300,20
-BEV005,Juice 200ml,1.2,retail,90,3.0,False,American Airlines,beverage,300,50,250,270,30
-BEV006,Herbal Tea Bag,0.4,pick & pack,540,1.5,True,Delta Airlines,beverage,150,20,130,140,10
-SNK001,Pretzels,2.0,retail,120,4.5,False,American Airlines,snack,300,55,245,270,30
-SNK002,Chocolate Bar 50g,1.8,retail,180,4.0,False,United Airlines,snack,250,30,220,240,20
-SNK003,Butter Cookies 75g,2.2,retail,90,4.8,False,Delta Airlines,snack,200,25,175,190,15
-SNK004,Mixed Nuts 30g,3.5,retail,270,7.0,False,American Airlines,snack,180,20,160,170,10
-SNK005,Snack Box Economy,4.0,pick & pack,60,8.5,False,United Airlines,snack,150,15,135,140,10
-SNK006,Bread Roll Pack,1.5,pick & pack,2,3.5,False,Delta Airlines,snack,220,30,190,200,20
-MEA001,Chicken Pasta,8.5,pick & pack,3,15.0,False,American Airlines,main meal,280,35,245,260,20
-MEA002,Beef Panini,7.8,pick & pack,2,14.0,False,United Airlines,main meal,240,25,215,230,15
-MEA003,Vegetarian Wrap,6.5,pick & pack,2,12.0,False,Delta Airlines,main meal,200,20,180,190,10
-MEA004,Chicken Sandwich,5.5,pick & pack,2,10.0,False,American Airlines,main meal,260,30,230,245,15
-MEA005,Turkey Club,7.2,pick & pack,2,13.0,False,United Airlines,main meal,220,25,195,205,15
+product_id,product_name,unit_cost,tipo_servicio,vida_util_dias,precio_consumidor,reusable,aerolinea,tipo,standard_quantity,units_returned,units_consumed,suggested_units,overload_units,freshness_score,acceptance_rate
+BEV001,Coca-Cola,1.5,retail,180,3.5,False,American Airlines,beverage,350,45,305,320,30,92.8,87.1
+BEV002,Coffee,2.5,pick & pack,365,5.0,True,American Airlines,beverage,400,120,280,300,20,95.6,70.0
+BEV003,Sparkling Water 330ml,0.8,retail,365,2.0,False,Delta Airlines,beverage,280,35,245,260,20,96.2,87.5
+BEV004,Still Water 500ml,0.6,retail,365,1.8,False,United Airlines,beverage,320,40,280,300,20,94.8,87.5
+BEV005,Juice 200ml,1.2,retail,90,3.0,False,American Airlines,beverage,300,50,250,270,30,88.9,83.3
+BEV006,Herbal Tea Bag,0.4,pick & pack,540,1.5,True,Delta Airlines,beverage,150,20,130,140,10,97.8,86.7
+SNK001,Pretzels,2.0,retail,120,4.5,False,American Airlines,snack,300,55,245,270,30,91.7,81.7
+SNK002,Chocolate Bar 50g,1.8,retail,180,4.0,False,United Airlines,snack,250,30,220,240,20,93.3,88.0
+SNK003,Butter Cookies 75g,2.2,retail,90,4.8,False,Delta Airlines,snack,200,25,175,190,15,87.8,87.5
+SNK004,Mixed Nuts 30g,3.5,retail,270,7.0,False,American Airlines,snack,180,20,160,170,10,96.3,88.9
+SNK005,Snack Box Economy,4.0,pick & pack,60,8.5,False,United Airlines,snack,150,15,135,140,10,85.0,90.0
+SNK006,Bread Roll Pack,1.5,pick & pack,2,3.5,False,Delta Airlines,snack,220,30,190,200,20,75.0,86.4
+MEA001,Chicken Pasta,8.5,pick & pack,3,15.0,False,American Airlines,main_meal,280,35,245,260,20,66.7,87.5
+MEA002,Beef Panini,7.8,pick & pack,2,14.0,False,United Airlines,main_meal,240,25,215,230,15,50.0,89.6
+MEA003,Vegetarian Wrap,6.5,pick & pack,2,12.0,False,Delta Airlines,main_meal,200,20,180,190,10,60.0,90.0
+MEA004,Chicken Sandwich,5.5,pick & pack,2,10.0,False,American Airlines,main_meal,260,30,230,245,15,55.0,88.5
+MEA005,Turkey Club,7.2,pick & pack,2,13.0,False,United Airlines,main_meal,220,25,195,205,15,45.0,88.6
