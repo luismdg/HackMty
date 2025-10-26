@@ -49,7 +49,7 @@ $$
 
 ## Project Structure
 
-
+'''
 FlightFlow/
 ├── backend/              # FastAPI application
 │   ├── app/
@@ -65,7 +65,7 @@ FlightFlow/
 │   ├── products_data.csv
 │   └── productivity_data.csv
 └── README.md
-
+'''
 
 ---
 
