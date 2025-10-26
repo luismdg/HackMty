@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ArrowLeft, Plane, Award } from "lucide-react";
+import { ArrowLeft, Plane, Award, Clock, Users, TrendingUp, MapPin } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { Badge } from "../../components/ui/badge";
 
@@ -46,6 +46,20 @@ export function FlightDetails({ flightId, onBack }) {
     fetchFlightData();
   }, [flightId]);
 
+  // Determinar tipo de tripulación basado en duración
+  const getCrewType = (duration) => {
+    return duration > 3 ? "high" : duration > 1.5 ? "medium" : "low";
+  };
+
+  const getCrewDescription = (crewType) => {
+    const descriptions = {
+      high: "Tripulación de Alta Eficiencia (Vuelos Largos)",
+      medium: "Tripulación Estándar (Vuelos Medianos)",
+      low: "Tripulación Básica (Vuelos Cortos)"
+    };
+    return descriptions[crewType];
+  };
+
   if (loading)
     return <div className="p-8 text-white"> ✈️ Cargando datos del vuelo...</div>;
   if (error) return <div className="p-8 text-red-400">{error}</div>;
@@ -54,8 +68,10 @@ export function FlightDetails({ flightId, onBack }) {
       <div className="p-8 text-white">No se encontraron datos del vuelo</div>
     );
 
+  const crewType = getCrewType(flightDetails.duration);
+
   return (
-    <div className="min-h-screen text-white p-8 space-y-6 font-sans">
+    <div className="min-h-screen text-white p-6 space-y-6 font-sans">
       {/* Header */}
       <div className="flex items-center gap-4">
         <Button
@@ -67,275 +83,226 @@ export function FlightDetails({ flightId, onBack }) {
           <ArrowLeft className="w-5 h-5" />
         </Button>
         <div>
-          <h1 className="text-3xl font-light tracking-tight text-[#DFBD69]">
-            Detalles Vuelo - {flightId}
+          <h1 className="text-2xl font-semibold text-[#DFBD69]">
+            {flightId} - {flightDetails.airline}
           </h1>
-          <p className="text-neutral-400 mt-1 text-sm">
-            Predicción de consumo y asignación de personal
+          <p className="text-neutral-400 text-sm">
+            {flightDetails.origin} → {flightDetails.destination} • {flightDetails.duration} hrs
           </p>
         </div>
       </div>
 
-      {/* Layout Cards */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* Flight Info Card */}
-        <div className="backdrop-blur-3xl bg-blue-300/10 rounded-md p-6 shadow-lg space-y-4">
-          <div className="flex items-center gap-3">
-            <div>
-              <p className="text-xl font-semibold text-[#C8D6E5]">
-                {flightDetails.airline}
-              </p>
-              <p className="text-sm font-mono text-[#3B82F6]">{flightId}</p>
+      {/* Main Content - 2 Column Layout */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+
+        {/* Left Column - Flight Information */}
+        <div className="space-y-6">
+          {/* Flight Overview Card */}
+          <div className="bg-[#0C1526] rounded-xl p-6 border border-[#1E293B]">
+            <div className="flex items-center gap-3 mb-6">
+              <Plane className="w-6 h-6 text-[#3B82F6]" />
+              <h2 className="text-lg font-semibold text-white">Información del Vuelo</h2>
+            </div>
+
+            <div className="grid grid-cols-2 gap-6 mb-6">
+              <div className="space-y-4">
+                <div>
+                  <p className="text-sm text-[#94A3B8]">Aeronave</p>
+                  <p className="text-white font-medium">{flightDetails.aircraft}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-[#94A3B8]">Capacidad</p>
+                  <p className="text-white font-medium">{flightDetails.maxCapacity} pasajeros</p>
+                </div>
+                <div>
+                  <p className="text-sm text-[#94A3B8]">Tickets Vendidos</p>
+                  <p className="text-[#3B82F6] font-semibold">{flightDetails.ticketsSold}</p>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <p className="text-sm text-[#94A3B8]">Duración</p>
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-[#F59E0B]" />
+                    <p className="text-white font-medium">{flightDetails.duration} horas</p>
+                  </div>
+                </div>
+                <div>
+                  <p className="text-sm text-[#94A3B8]">Salida</p>
+                  <p className="text-white font-medium">{flightDetails.departureDate}</p>
+                  <p className="text-sm text-[#94A3B8]">{flightDetails.departureTime}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between p-4 bg-[#1E293B] rounded-lg">
+              <div className="text-center">
+                <p className="text-sm text-[#94A3B8]">Origen</p>
+                <p className="text-white font-semibold">{flightDetails.origin}</p>
+              </div>
+              <Plane className="w-5 h-5 text-[#3B82F6] rotate-90" />
+              <div className="text-center">
+                <p className="text-sm text-[#94A3B8]">Destino</p>
+                <p className="text-white font-semibold">{flightDetails.destination}</p>
+              </div>
             </div>
           </div>
 
-          <div className="rounded-lg overflow-hidden border border-[#1E293B] shadow">
-            <img
-              src="/commercial-airplane-side-view.jpg"
-              alt="Aircraft"
-              className="w-full h-32 object-cover"
-            />
-          </div>
+          {/* Recommended Products Card */}
+          <div className="bg-[#0C1526] rounded-xl p-6 border border-[#1E293B]">
+            <div className="flex items-center gap-3 mb-6">
+              <TrendingUp className="w-6 h-6 text-[#10B981]" />
+              <h2 className="text-lg font-semibold text-white">Productos Sugeridos</h2>
+            </div>
 
-          <div className="grid grid-cols-2 gap-4 text-sm text-[#94A3B8]">
-            <div>
-              <p>Aeronave</p>
-              <p className="text-[#C8D6E5] font-semibold">
-                {flightDetails.aircraft}
-              </p>
-            </div>
-            <div>
-              <p>Capacidad Máxima</p>
-              <p className="text-[#C8D6E5] font-semibold">
-                {flightDetails.maxCapacity}
-              </p>
-            </div>
-            <div>
-              <p>Tickets Vendidos</p>
-              <p className="text-[#3B82F6] font-semibold">
-                {flightDetails.ticketsSold}
-              </p>
-            </div>
-            <div>
-              <p>Duración</p>
-              <p className="text-[#C8D6E5] font-semibold">
-                {flightDetails.duration} hrs
-              </p>
-            </div>
-          </div>
+            <div className="space-y-4">
+              {products.slice(0, 6).map((product) => (
+                <div key={product.productId} className="flex items-center justify-between p-4 bg-[#1E293B] rounded-lg border border-[#374151]">
+                  <div className="flex items-center gap-4 flex-1">
+                    <div className="text-center">
+                      <p className="font-mono text-sm text-[#94A3B8]">ID</p>
+                      <p className="font-mono text-white">{product.productId}</p>
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-white font-medium">{product.productName}</p>
+                      <p className="text-xs text-[#94A3B8] capitalize">{product.foodType}</p>
+                    </div>
+                  </div>
 
-          <div className="pt-4 border-t border-[#1E293B] flex items-center justify-between text-sm text-[#94A3B8]">
-            <div>
-              <p>Origen</p>
-              <p className="text-[#C8D6E5] font-semibold">
-                {flightDetails.origin}
-              </p>
+                  <div className="text-right space-y-1">
+                    <div className="flex items-center gap-4">
+                      <div>
+                        <p className="text-xs text-[#94A3B8]">Sugeridos</p>
+                        <p className="text-[#3B82F6] font-semibold">{product.suggestedUnits}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-[#94A3B8]">Margen</p>
+                        <p className="text-[#10B981] font-semibold">+{product.overloadUnits}</p>
+                      </div>
+                    </div>
+                    <p className="text-xs text-[#94A3B8]">
+                      {flightDetails.duration > 3 ? "Extra por vuelo largo" :
+                        flightDetails.duration > 1.5 ? "Stock estándar" : "Mínimo necesario"}
+                    </p>
+                  </div>
+                </div>
+              ))}
             </div>
-            <Plane className="w-5 h-5 text-[#3B82F6] rotate-90" />
-            <div>
-              <p>Destino</p>
-              <p className="text-[#C8D6E5] font-semibold">
-                {flightDetails.destination}
-              </p>
-            </div>
-          </div>
-
-          <div className="pt-4 border-t border-[#1E293B] text-sm text-[#94A3B8]">
-            <p>Fecha y Hora de Salida</p>
-            <p className="text-[#C8D6E5] font-semibold">
-              {flightDetails.departureDate} - {flightDetails.departureTime}
-            </p>
           </div>
         </div>
 
-        {/* Recommended Operators Card */}
-        {recommendedOperators && recommendedOperators.recommended_operators && recommendedOperators.recommended_operators.length > 0 && (
-          <div className="lg:col-span-1 bg-[#0C1526] rounded-lg p-6 shadow-lg space-y-6">
-            <div className="flex items-center gap-2">
-              <Award className="w-5 h-5 text-[#DFBD69]" />
-              <h2 className="text-lg font-semibold text-[#DFBD69]">
-                Operarios Recomendados
-              </h2>
-            </div>
-
-            {/* Primer operario recomendado */}
-            <div className="space-y-4">
+        {/* Right Column - Crew Recommendations */}
+        <div className="space-y-6">
+          {/* Crew Type Indicator */}
+          <div className="bg-[#0C1526] rounded-xl p-6 border border-[#1E293B]">
+            <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-[#3B82F6] rounded-full flex items-center justify-center text-sm font-semibold">
-                  {recommendedOperators.recommended_operators[0].nombre.split(' ').map(n => n[0]).join('')}
-                </div>
+                <Users className="w-6 h-6 text-[#DFBD69]" />
                 <div>
-                  <p className="font-semibold text-[#C8D6E5]">
-                    {recommendedOperators.recommended_operators[0].nombre}
-                  </p>
-                  <p className="text-xs text-[#94A3B8]">
-                    {recommendedOperators.recommended_operators[0].puesto}
-                  </p>
-                </div>
-                <Badge className="bg-[#10B981] text-white ml-auto">
-                  #{1}
-                </Badge>
-              </div>
-
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-[#94A3B8]">Score:</span>
-                  <span className="text-[#C8D6E5] font-semibold">
-                    {recommendedOperators.recommended_operators[0].score}
-                  </span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-[#94A3B8]">Eficiencia:</span>
-                  <span className="text-[#C8D6E5] font-semibold">
-                    {recommendedOperators.recommended_operators[0].eficiencia_promedio}%
-                  </span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-[#94A3B8]">Items/min:</span>
-                  <span className="text-[#C8D6E5] font-semibold">
-                    {recommendedOperators.recommended_operators[0].items_por_minuto_promedio}
-                  </span>
+                  <h2 className="text-lg font-semibold text-white">Recomendación de Tripulación</h2>
+                  <p className="text-sm text-[#94A3B8]">{getCrewDescription(crewType)}</p>
                 </div>
               </div>
+              <Badge className={
+                crewType === "high" ? "bg-green-500/20 text-green-400 border-green-500/30" :
+                  crewType === "medium" ? "bg-yellow-500/20 text-yellow-400 border-yellow-500/30" :
+                    "bg-blue-500/20 text-blue-400 border-blue-500/30"
+              }>
+                {crewType === "high" ? "Alta Demanda" : crewType === "medium" ? "Demanda Media" : "Demanda Baja"}
+              </Badge>
             </div>
 
-            {/* Segundo operario recomendado */}
-            {recommendedOperators.recommended_operators.length > 1 && (
-              <>
-                <div className="border-t border-[#1E293B] pt-4"></div>
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-[#6366F1] rounded-full flex items-center justify-center text-sm font-semibold">
-                      {recommendedOperators.recommended_operators[1].nombre.split(' ').map(n => n[0]).join('')}
-                    </div>
-                    <div>
-                      <p className="font-semibold text-[#C8D6E5]">
-                        {recommendedOperators.recommended_operators[1].nombre}
-                      </p>
-                      <p className="text-xs text-[#94A3B8]">
-                        {recommendedOperators.recommended_operators[1].puesto}
-                      </p>
-                    </div>
-                    <Badge className="bg-[#8B5CF6] text-white ml-auto">
-                      #{2}
-                    </Badge>
-                  </div>
-
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-[#94A3B8]">Score:</span>
-                      <span className="text-[#C8D6E5] font-semibold">
-                        {recommendedOperators.recommended_operators[1].score}
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-[#94A3B8]">Eficiencia:</span>
-                      <span className="text-[#C8D6E5] font-semibold">
-                        {recommendedOperators.recommended_operators[1].eficiencia_promedio}%
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-[#94A3B8]">Items/min:</span>
-                      <span className="text-[#C8D6E5] font-semibold">
-                        {recommendedOperators.recommended_operators[1].items_por_minuto_promedio}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </>
-            )}
-
-            {/* Ubicación común */}
-            <div className="pt-4 border-t border-[#1E293B]">
-              <p className="text-xs text-[#94A3B8] mb-1">Ubicación:</p>
-              <p className="text-sm text-[#C8D6E5]">
-                {recommendedOperators.recommended_operators[0].ubicacion}
-              </p>
-            </div>
-
-            {/* Alternativas adicionales */}
-            {recommendedOperators.alternative_operators && recommendedOperators.alternative_operators.length > 0 && (
-              <div className="pt-4 border-t border-[#1E293B]">
-                <p className="text-xs text-[#94A3B8] mb-2">También disponibles:</p>
-                <div className="space-y-2">
-                  {recommendedOperators.alternative_operators.slice(0, 2).map((operator, index) => (
-                    <div key={index} className="flex justify-between items-center text-sm">
-                      <span className="text-[#C8D6E5] truncate">{operator.nombre}</span>
-                      <Badge variant="outline" className="text-xs">
-                        {operator.eficiencia_promedio}%
-                      </Badge>
-                    </div>
-                  ))}
-                </div>
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div className="text-center p-3 bg-[#1E293B] rounded-lg">
+                <p className="text-[#94A3B8]">Duración del Vuelo</p>
+                <p className="text-white font-semibold text-lg">{flightDetails.duration}h</p>
               </div>
-            )}
+              <div className="text-center p-3 bg-[#1E293B] rounded-lg">
+                <p className="text-[#94A3B8]">Pasajeros</p>
+                <p className="text-[#3B82F6] font-semibold text-lg">{flightDetails.ticketsSold}</p>
+              </div>
+            </div>
           </div>
-        )}
 
-        {/* Consumption Prediction Table */}
-        <div className="md:col-span-2 backdrop-blur-3xl bg-slate-900/20 rounded-md shadow-lg overflow-x-auto">
-          <table className="w-full text-sm border-collapse">
-            <thead className="backdrop-blur-3xl bg-blue-300/10 text-[#94A3B8] uppercase text-xs">
-              <tr>
-                <th className="p-3 text-left">ID</th>
-                <th className="p-3 text-left">Producto</th>
-                <th className="p-3 text-left">Tipo</th>
-                <th className="p-3 text-right">Costo</th>
-                <th className="p-3 text-center">Reusable</th>
-                <th className="p-3 text-right">Std Qty</th>
-                <th className="p-3 text-right">Devueltos</th>
-                <th className="p-3 text-right">Consumidos</th>
-                <th className="p-3 text-right">Sugeridos</th>
-                <th className="p-3 text-right">Margen</th>
-              </tr>
-            </thead>
-            <tbody>
-              {products.map((product) => (
-                <tr
-                  key={product.productId}
-                  className="border-b border-[#1E293B]/50 hover:bg-[#1E293B]/40 transition-colors cursor-pointer"
-                >
-                  <td className="font-mono text-[#C8D6E5] p-3">
-                    {product.productId}
-                  </td>
-                  <td className="text-[#C8D6E5] font-medium p-3">
-                    {product.productName}
-                  </td>
-                  <td className="p-3">
-                    <Badge variant="outline" className="text-xs">
-                      {product.foodType}
-                    </Badge>
-                  </td>
-                  <td className="text-right text-[#C8D6E5] p-3">
-                    ${product.unitCost.toFixed(2)}
-                  </td>
-                  <td className="text-center p-3">
-                    <Badge
-                      variant={product.reusableFlag ? "accent" : "muted"}
-                      className="text-xs"
-                    >
-                      {product.reusableFlag ? "Sí" : "No"}
-                    </Badge>
-                  </td>
-                  <td className="text-right text-[#C8D6E5] p-3">
-                    {product.standardQuantity}
-                  </td>
-                  <td className="text-right text-[#94A3B8] p-3">
-                    {product.unitsReturned}
-                  </td>
-                  <td className="text-right text-[#C8D6E5] p-3">
-                    {product.unitsConsumed}
-                  </td>
-                  <td className="text-right text-[#3B82F6] font-semibold p-3">
-                    {product.suggestedUnits}
-                  </td>
-                  <td className="text-right text-[#3B82F6] font-semibold p-3">
-                    +{product.overloadUnits}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          {/* Recommended Operators */}
+          {recommendedOperators && recommendedOperators.recommended_operators && (
+            <div className="bg-[#0C1526] rounded-xl p-6 border border-[#1E293B]">
+              <div className="flex items-center gap-3 mb-6">
+                <Award className="w-6 h-6 text-[#DFBD69]" />
+                <h2 className="text-lg font-semibold text-white">Operarios Recomendados</h2>
+              </div>
+
+              <div className="space-y-4">
+                {recommendedOperators.recommended_operators.slice(0, 2).map((operator, index) => (
+                  <div key={index} className="p-4 bg-[#1E293B] rounded-lg border border-[#374151]">
+                    <div className="flex items-center gap-4">
+                      {/* Profile Photo Placeholder */}
+                      <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-semibold ${index === 0 ? "bg-gradient-to-br from-[#3B82F6] to-[#1D4ED8]" :
+                        "bg-gradient-to-br from-[#6366F1] to-[#8B5CF6]"
+                        }`}>
+                        {operator.nombre.split(' ').map(n => n[0]).join('')}
+                      </div>
+
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <p className="text-white font-semibold">{operator.nombre}</p>
+                          <Badge className={
+                            index === 0 ? "bg-green-500/20 text-green-400" :
+                              "bg-purple-500/20 text-purple-400"
+                          }>
+                            #{index + 1} Recomendado
+                          </Badge>
+                        </div>
+                        <p className="text-sm text-[#94A3B8]">{operator.puesto}</p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-4 mt-4 text-center">
+                      <div>
+                        <p className="text-xs text-[#94A3B8]">Score</p>
+                        <p className="text-white font-semibold">{operator.score}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-[#94A3B8]">Eficiencia</p>
+                        <p className="text-[#10B981] font-semibold">{operator.eficiencia_promedio}%</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-[#94A3B8]">Items/min</p>
+                        <p className="text-[#3B82F6] font-semibold">{operator.items_por_minuto_promedio}</p>
+                      </div>
+                    </div>
+
+                    {/* Progress Bar for Efficiency */}
+                    <div className="mt-3">
+                      <div className="flex justify-between text-xs mb-1">
+                        <span className="text-[#94A3B8]">Nivel de Eficiencia</span>
+                        <span className="text-white">{operator.eficiencia_promedio}%</span>
+                      </div>
+                      <div className="w-full bg-[#374151] rounded-full h-2">
+                        <div
+                          className={`h-2 rounded-full ${operator.eficiencia_promedio >= 90 ? "bg-green-500" :
+                            operator.eficiencia_promedio >= 80 ? "bg-yellow-500" :
+                              operator.eficiencia_promedio >= 70 ? "bg-orange-500" : "bg-red-500"
+                            }`}
+                          style={{ width: `${operator.eficiencia_promedio}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Location Info */}
+              <div className="mt-6 pt-4 border-t border-[#1E293B]">
+                <p className="text-sm text-[#94A3B8] mb-2">Ubicación de la Tripulación</p>
+                <div className="flex items-center gap-2 p-3 bg-[#1E293B] rounded-lg">
+                  <MapPin className="w-4 h-4 text-[#EF4444]" />
+                  <p className="text-white">{recommendedOperators.recommended_operators[0].ubicacion}</p>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

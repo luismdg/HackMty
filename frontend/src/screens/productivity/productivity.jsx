@@ -36,7 +36,8 @@ export function ProductivityTable({ onOperatorSelect }) {
           ([sessionId, sessionData]) => ({
             id: sessionId,
             ...sessionData,
-            overall: calculateOverall(sessionData),
+            // Cambiado: usar eficiencia_operario directamente como Score General
+            scoreGeneral: sessionData.eficiencia_operario,
           })
         );
 
@@ -54,9 +55,12 @@ export function ProductivityTable({ onOperatorSelect }) {
     fetchProductivityData();
   }, []);
 
-  const calculateOverall = (session) => {
-    const score = (session.eficiencia_operario * 0.6 + session.tasa_items_por_minuto * 0.4);
-    return Math.min(100, Math.max(0, score));
+  // Función getOverallColor actualizada para usar scoreGeneral
+  const getOverallColor = (score) => {
+    if (score >= 90) return "border-green-500";
+    if (score >= 80) return "border-yellow-500";
+    if (score >= 70) return "border-orange-500";
+    return "border-red-500";
   };
 
   const getRankColor = (rank) => {
@@ -123,7 +127,7 @@ export function ProductivityTable({ onOperatorSelect }) {
     );
 
   return (
-    <div className="min-h-screen bg-[#050B16] text-white p-8 space-y-6">
+    <div className="min-h-screen text-white p-8 space-y-6">
       {/* Header */}
       <div>
         <h1 className="text-3xl font-light tracking-tight text-[#DFBD69]">
@@ -196,42 +200,58 @@ export function ProductivityTable({ onOperatorSelect }) {
             <label className="text-xs mb-1.5 block text-[#94A3B8]">
               Operario
             </label>
-            <Select value={operatorFilter} onValueChange={setOperatorFilter}>
+            <select
+              value={operatorFilter}
+              onChange={(e) => setOperatorFilter(e.target.value)}
+              className="w-full bg-[#09111E] rounded-md px-3 py-2 text-sm text-white focus:ring-1 focus:ring-[#3B82F6] outline-none"
+            >
               <option value="any">- Cualquiera -</option>
               {uniqueOperators.map(operator => (
                 <option key={operator} value={operator}>{operator}</option>
               ))}
-            </Select>
+            </select>
           </div>
           <div>
             <label className="text-xs mb-1.5 block text-[#94A3B8]">Turno</label>
-            <Select value={shiftFilter} onValueChange={setShiftFilter}>
+            <select
+              value={shiftFilter}
+              onChange={(e) => setShiftFilter(e.target.value)}
+              className="w-full bg-[#09111E] rounded-md px-3 py-2 text-sm text-white focus:ring-1 focus:ring-[#3B82F6] outline-none"
+            >
               <option value="any">- Cualquiera -</option>
               <option value="Matutino">Matutino</option>
               <option value="Vespertino">Vespertino</option>
-            </Select>
+            </select>
           </div>
           <div>
             <label className="text-xs mb-1.5 block text-[#94A3B8]">
               Área de trabajo
             </label>
-            <Select value={areaFilter} onValueChange={setAreaFilter}>
+            <select
+              value={areaFilter}
+              onChange={(e) => setAreaFilter(e.target.value)}
+              className="w-full bg-[#09111E] rounded-md px-3 py-2 text-sm text-white focus:ring-1 focus:ring-[#3B82F6] outline-none"
+            >
               <option value="any">- Cualquiera -</option>
               {uniqueAreas.map(area => (
                 <option key={area} value={area}>{area}</option>
               ))}
-            </Select>
+            </select>
           </div>
           <div>
             <label className="text-xs mb-1.5 block text-[#94A3B8]">
               Ciudad
             </label>
-            <Select value={cityFilter} onValueChange={setCityFilter}>
+            <select
+              value={cityFilter}
+              onChange={(e) => setCityFilter(e.target.value)}
+              className="w-full bg-[#09111E] rounded-md px-3 py-2 text-sm text-white focus:ring-1 focus:ring-[#3B82F6] outline-none"
+            >
               <option value="any">- Cualquiera -</option>
               {availableCities.map(city => (
                 <option key={city} value={city}>{city}</option>
               ))}
-            </Select>
+            </select>
           </div>
         </div>
       </div>
@@ -257,7 +277,7 @@ export function ProductivityTable({ onOperatorSelect }) {
               <th className="p-3 font-semibold">Turno</th>
               <th className="p-3 font-semibold">Área</th>
               <th className="p-3 font-semibold text-right">Items/min</th>
-              <th className="p-3 font-semibold text-center">Overall</th>
+              <th className="p-3 font-semibold text-center">Score General</th>
             </tr>
           </thead>
           <tbody>
@@ -307,9 +327,9 @@ export function ProductivityTable({ onOperatorSelect }) {
                 </td>
                 <td className="p-3 text-center">
                   <div
-                    className={`w-12 h-12 mx-auto rounded-lg border-2 ${getOverallColor(session.overall)} flex items-center justify-center text-white font-bold text-sm`}
+                    className={`w-12 h-12 mx-auto rounded-lg border-2 ${getOverallColor(session.scoreGeneral)} flex items-center justify-center text-white font-bold text-sm`}
                   >
-                    {Math.round(session.overall)}
+                    {Math.round(session.scoreGeneral)}
                   </div>
                 </td>
               </tr>
@@ -340,15 +360,14 @@ export function ProductivityTable({ onOperatorSelect }) {
               >
                 <div className="flex items-center gap-3 mb-2">
                   <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-white ${
-                      index === 0
-                        ? "bg-yellow-500/50 backdrop-blur-3xl"
-                        : index === 1
+                    className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-white ${index === 0
+                      ? "bg-yellow-500/50 backdrop-blur-3xl"
+                      : index === 1
                         ? "bg-gray-400/50 backdrop-blur-3xl"
                         : index === 2
-                        ? "bg-orange-500/50 backdrop-blur-3xl"
-                        : "bg-blue-700/50 backdrop-blur-3xl"
-                    }`}
+                          ? "bg-orange-500/50 backdrop-blur-3xl"
+                          : "bg-blue-700/50 backdrop-blur-3xl"
+                      }`}
                   >
                     {index + 1}
                   </div>

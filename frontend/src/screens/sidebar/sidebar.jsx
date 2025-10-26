@@ -11,10 +11,12 @@ export function Sidebar({ currentSection, onSectionChange }) {
 
       {/* Menu Sections */}
       <nav className="flex-1 p-4 space-y-2">
-        <div className="space-y-1">
-          <p className="text-xs font-semibold text-white hover-uppercase tracking-wider px-3 mb-2">
-            MÓDULOS
-          </p>
+        <div className="space-y-1 w-full">
+          <div className="justify-center flex w-full">
+            <p className="text-xs font-semibold text-white hover-uppercase tracking-wider px-3 mb-2">
+              MÓDULOS
+            </p>
+          </div>
 
           {/* Flight Consumption Predictor */}
           <Button

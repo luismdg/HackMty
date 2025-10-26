@@ -1,5 +1,19 @@
 import { useState, useEffect } from "react";
-import { ArrowLeft, User, Calendar, Target, TrendingUp, MapPin, Flag, Building2, Trophy } from "lucide-react";
+import {
+    ArrowLeft,
+    User,
+    Calendar,
+    Target,
+    TrendingUp,
+    MapPin,
+    Flag,
+    Building2,
+    Trophy,
+    Clock,
+    Zap,
+    Crosshair,
+    BarChart3
+} from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { Badge } from "../../components/ui/badge";
 
@@ -29,7 +43,6 @@ export function ProductivityDetails({ operatorName, onBack }) {
                 const sessionsData = await sessionsResponse.json();
                 const locationData = locationResponse.ok ? await locationResponse.json() : null;
 
-                // Convertir los datos de sesiones a array
                 const sessionsArray = Object.entries(sessionsData).map(([sessionId, sessionData]) => ({
                     id: sessionId,
                     ...sessionData,
@@ -38,7 +51,6 @@ export function ProductivityDetails({ operatorName, onBack }) {
                 setSessions(sessionsArray);
                 setLocationData(locationData);
 
-                // Calcular datos agregados del operario
                 if (sessionsArray.length > 0) {
                     const firstSession = sessionsArray[0];
                     const totalSessions = sessionsArray.length;
@@ -64,7 +76,6 @@ export function ProductivityDetails({ operatorName, onBack }) {
                         ciudad: firstSession.ciudad
                     });
 
-                    // Fetch city statistics if we have location data
                     if (firstSession.ciudad) {
                         try {
                             const cityStatsResponse = await fetch(`/productivity/ciudad/${firstSession.ciudad}/estadisticas`);
@@ -109,7 +120,6 @@ export function ProductivityDetails({ operatorName, onBack }) {
         return "bg-red-500";
     };
 
-    // KPI objetivo hardcodeado
     const objectiveKPI = {
         target: 85,
         current: operatorData ? Math.round(operatorData.avgEfficiency) : 0,
@@ -130,288 +140,288 @@ export function ProductivityDetails({ operatorName, onBack }) {
         );
 
     return (
-        <div className="min-h-screen bg-[#050B16] text-white p-8 space-y-6 font-sans">
-            {/* Header */}
-            <div className="flex items-center gap-4">
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={onBack}
-                    className="text-white hover:bg-[#1E293B]"
-                >
-                    <ArrowLeft className="w-5 h-5" />
-                </Button>
-                <div>
-                    <h1 className="text-3xl font-light tracking-tight text-[#DFBD69]">
-                        Detalles Operario - {operatorData.nombre}
-                    </h1>
-                    <p className="text-neutral-400 mt-1 text-sm">
-                        Análisis de desempeño y métricas detalladas
-                    </p>
+        <div className="min-h-screen text-white p-6 space-y-6 font-sans">
+            {/* Header Section */}
+            <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={onBack}
+                        className="text-white hover:bg-[#1E293B]"
+                    >
+                        <ArrowLeft className="w-5 h-5" />
+                    </Button>
+                    <div>
+                        <h1 className="text-2xl font-semibold text-[#DFBD69]">
+                            {operatorData.nombre}
+                        </h1>
+                        <p className="text-neutral-400 text-sm">
+                            {operatorData.puesto} • {sessions.length} sesiones
+                        </p>
+                    </div>
+                </div>
+                <div className="text-right">
+                    <p className="text-sm text-[#94A3B8]">Score General</p>
+                    <div className={`text-2xl font-bold ${getEfficiencyColor(operatorData.avgEfficiency)}`}>
+                        {Math.round(operatorData.avgEfficiency)}%
+                    </div>
                 </div>
             </div>
 
-            {/* Layout Cards */}
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                {/* Left Column - Operator Info & Location */}
-                <div className="lg:col-span-1 space-y-6">
-                    {/* Operator Info Card */}
-                    <div className="bg-[#0C1526] rounded-lg p-6 shadow-lg space-y-4">
-                        <div className="flex items-center gap-3">
-                            <div className="w-16 h-16 bg-[#1E293B] rounded-full flex items-center justify-center text-xl font-semibold">
+            {/* Main Dashboard Grid */}
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+
+                {/* Left Column - Profile & Location */}
+                <div className="space-y-6">
+                    {/* Profile Card */}
+                    <div className="bg-[#0C1526] rounded-xl p-6 border border-[#1E293B]">
+                        <div className="flex items-center gap-4 mb-6">
+                            <div className="w-16 h-16 bg-gradient-to-br from-[#1E293B] to-[#334155] rounded-full flex items-center justify-center text-xl font-semibold border border-[#374151]">
                                 {operatorData.nombre.split(' ').map(n => n[0]).join('')}
                             </div>
                             <div>
-                                <p className="text-xl font-semibold text-[#C8D6E5]">
-                                    {operatorData.nombre}
-                                </p>
-                                <p className="text-sm text-[#94A3B8]">{operatorData.puesto}</p>
+                                <h3 className="text-lg font-semibold text-white">{operatorData.nombre}</h3>
+                                <p className="text-[#94A3B8] text-sm">{operatorData.puesto}</p>
                             </div>
                         </div>
 
-                        <div className="space-y-3">
-                            <div className="flex items-center gap-2 text-sm text-[#94A3B8]">
-                                <User className="w-4 h-4" />
-                                <span>Brazo dominante: </span>
-                                <span className="text-[#C8D6E5] font-semibold">{operatorData.brazoDominante}</span>
+                        <div className="space-y-4">
+                            <div className="grid grid-cols-2 gap-4 text-sm">
+                                <div className="space-y-1">
+                                    <div className="flex items-center gap-2 text-[#94A3B8]">
+                                        <User className="w-4 h-4" />
+                                        <span>Brazo dominante</span>
+                                    </div>
+                                    <p className="text-white font-medium">{operatorData.brazoDominante}</p>
+                                </div>
+                                <div className="space-y-1">
+                                    <div className="flex items-center gap-2 text-[#94A3B8]">
+                                        <Calendar className="w-4 h-4" />
+                                        <span>Turnos</span>
+                                    </div>
+                                    <p className="text-white font-medium">{operatorData.turnos.join(', ')}</p>
+                                </div>
                             </div>
-                            <div className="flex items-center gap-2 text-sm text-[#94A3B8]">
-                                <Target className="w-4 h-4" />
-                                <span>Áreas de trabajo: </span>
-                                <span className="text-[#C8D6E5] font-semibold">{operatorData.areasTrabajo.join(', ')}</span>
-                            </div>
-                            <div className="flex items-center gap-2 text-sm text-[#94A3B8]">
-                                <Calendar className="w-4 h-4" />
-                                <span>Turnos: </span>
-                                <span className="text-[#C8D6E5] font-semibold">{operatorData.turnos.join(', ')}</span>
-                            </div>
-                        </div>
 
-                        <div className="pt-4 border-t border-[#1E293B] space-y-3">
-                            <div className="flex justify-between text-sm">
-                                <span className="text-[#94A3B8]">Uso brazo izquierdo:</span>
-                                <span className="text-[#C8D6E5] font-semibold">
-                                    {operatorData.usoBrazoIzquierdo.toFixed(1)}%
-                                </span>
-                            </div>
-                            <div className="flex justify-between text-sm">
-                                <span className="text-[#94A3B8]">Uso brazo derecho:</span>
-                                <span className="text-[#C8D6E5] font-semibold">
-                                    {operatorData.usoBrazoDerecho.toFixed(1)}%
-                                </span>
-                            </div>
-                        </div>
-
-                        {/* Overall Score */}
-                        <div className="pt-4 border-t border-[#1E293B] text-center">
-                            <p className="text-sm text-[#94A3B8] mb-2">Score General</p>
-                            <div
-                                className={`w-20 h-20 mx-auto rounded-xl border-4 ${getOverallColor(operatorData.avgEfficiency)} flex items-center justify-center text-white font-bold text-2xl`}
-                            >
-                                {Math.round(operatorData.avgEfficiency)}
+                            <div className="space-y-2">
+                                <div className="flex items-center gap-2 text-[#94A3B8] text-sm">
+                                    <Target className="w-4 h-4" />
+                                    <span>Áreas de trabajo</span>
+                                </div>
+                                <div className="flex flex-wrap gap-2">
+                                    {operatorData.areasTrabajo.map((area, index) => (
+                                        <Badge key={index} variant="outline" className="text-xs bg-[#1E293B] text-[#C8D6E5]">
+                                            {area}
+                                        </Badge>
+                                    ))}
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     {/* Location Card */}
-                    <div className="bg-[#0C1526] rounded-lg p-6 shadow-lg space-y-4">
-                        <div className="flex items-center gap-2 text-[#DFBD69]">
-                            <MapPin className="w-5 h-5" />
-                            <h3 className="font-semibold">Ubicación</h3>
+                    <div className="bg-[#0C1526] rounded-xl p-6 border border-[#1E293B]">
+                        <div className="flex items-center gap-2 mb-4">
+                            <MapPin className="w-5 h-5 text-[#DFBD69]" />
+                            <h3 className="font-semibold text-white">Ubicación</h3>
                         </div>
 
                         <div className="space-y-3">
-                            <div className="flex items-center gap-2 text-sm">
-                                <Flag className="w-4 h-4 text-[#94A3B8]" />
-                                <span className="text-[#94A3B8]">País:</span>
-                                <span className="text-[#C8D6E5] font-semibold ml-auto">{operatorData.country}</span>
+                            <div className="flex items-center justify-between p-3 bg-[#1E293B] rounded-lg">
+                                <div className="flex items-center gap-2">
+                                    <Flag className="w-4 h-4 text-[#94A3B8]" />
+                                    <span className="text-[#94A3B8]">País</span>
+                                </div>
+                                <span className="text-white font-medium">{operatorData.country}</span>
                             </div>
-                            <div className="flex items-center gap-2 text-sm">
-                                <Building2 className="w-4 h-4 text-[#94A3B8]" />
-                                <span className="text-[#94A3B8]">Ciudad:</span>
-                                <span className="text-[#C8D6E5] font-semibold ml-auto">{operatorData.ciudad}</span>
+                            <div className="flex items-center justify-between p-3 bg-[#1E293B] rounded-lg">
+                                <div className="flex items-center gap-2">
+                                    <Building2 className="w-4 h-4 text-[#94A3B8]" />
+                                    <span className="text-[#94A3B8]">Ciudad</span>
+                                </div>
+                                <span className="text-white font-medium">{operatorData.ciudad}</span>
                             </div>
                         </div>
 
                         {cityStats && (
-                            <div className="pt-4 border-t border-[#1E293B] space-y-2">
-                                <p className="text-sm text-[#94A3B8] text-center">Estadísticas de {operatorData.ciudad}</p>
-                                <div className="grid grid-cols-2 gap-2 text-xs">
-                                    <div className="text-center p-2 bg-[#1E293B] rounded">
-                                        <p className="text-[#C8D6E5] font-semibold">{cityStats.estadisticas_generales?.total_operarios || 0}</p>
-                                        <p className="text-[#94A3B8]">Operarios</p>
+                            <div className="mt-4 pt-4 border-t border-[#1E293B]">
+                                <p className="text-sm text-[#94A3B8] text-center mb-3">Estadísticas Locales</p>
+                                <div className="grid grid-cols-2 gap-3">
+                                    <div className="text-center p-3 bg-[#1E293B] rounded-lg">
+                                        <p className="text-lg font-bold text-white">{cityStats.estadisticas_generales?.total_operarios || 0}</p>
+                                        <p className="text-xs text-[#94A3B8]">Operarios</p>
                                     </div>
-                                    <div className="text-center p-2 bg-[#1E293B] rounded">
-                                        <p className="text-[#C8D6E5] font-semibold">{cityStats.estadisticas_generales?.eficiencia_promedio || 0}%</p>
-                                        <p className="text-[#94A3B8]">Eficiencia</p>
+                                    <div className="text-center p-3 bg-[#1E293B] rounded-lg">
+                                        <p className="text-lg font-bold text-[#10B981]">{cityStats.estadisticas_generales?.eficiencia_promedio || 0}%</p>
+                                        <p className="text-xs text-[#94A3B8]">Eficiencia</p>
                                     </div>
                                 </div>
-                                {cityStats.mejor_operario && cityStats.mejor_operario.nombre === operatorData.nombre && (
-                                    <div className="flex items-center gap-2 justify-center mt-2 p-2 bg-[#172554] rounded border border-[#1E40AF]">
-                                        <Trophy className="w-4 h-4 text-[#60A5FA]" />
-                                        <span className="text-xs text-[#60A5FA] font-semibold">Mejor operario</span>
-                                    </div>
-                                )}
                             </div>
                         )}
                     </div>
                 </div>
 
-                {/* Right Column - Statistics, KPI and Sessions */}
-                <div className="lg:col-span-3 space-y-6">
-                    {/* Statistics and KPI Cards */}
-                    <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-                        {/* Statistics Cards */}
-                        <div className="md:col-span-3 grid grid-cols-2 md:grid-cols-4 gap-4">
-                            <div className="bg-[#0C1526] rounded-lg p-4 text-center">
-                                <TrendingUp className="w-8 h-8 mx-auto mb-2 text-[#3B82F6]" />
-                                <p className="text-2xl font-bold text-white">{operatorData.totalSessions}</p>
-                                <p className="text-xs text-[#94A3B8]">Sesiones Totales</p>
-                            </div>
-                            <div className="bg-[#0C1526] rounded-lg p-4 text-center">
-                                <Target className="w-8 h-8 mx-auto mb-2 text-[#10B981]" />
-                                <p className="text-2xl font-bold text-white">{operatorData.totalItems}</p>
-                                <p className="text-xs text-[#94A3B8]">Items Procesados</p>
-                            </div>
-                            <div className="bg-[#0C1526] rounded-lg p-4 text-center">
-                                <div className="w-8 h-8 mx-auto mb-2 flex items-center justify-center">
-                                    <span className="text-xl">⚡</span>
-                                </div>
-                                <p className="text-2xl font-bold text-white">
-                                    {operatorData.avgItemsPerMinute.toFixed(1)}
-                                </p>
-                                <p className="text-xs text-[#94A3B8]">Items/Min</p>
-                            </div>
-                            <div className="bg-[#0C1526] rounded-lg p-4 text-center">
-                                <div className="w-8 h-8 mx-auto mb-2 flex items-center justify-center">
-                                    <span className="text-xl">🎯</span>
-                                </div>
-                                <p className="text-2xl font-bold text-white">
-                                    {operatorData.avgPrecision.toFixed(1)}%
-                                </p>
-                                <p className="text-xs text-[#94A3B8]">Precisión</p>
-                            </div>
+                {/* Center Column - Performance Metrics */}
+                <div className="space-y-6">
+                    {/* Performance Stats */}
+                    <div className="bg-[#0C1526] rounded-xl p-6 border border-[#1E293B]">
+                        <div className="flex items-center gap-2 mb-6">
+                            <BarChart3 className="w-5 h-5 text-[#DFBD69]" />
+                            <h3 className="font-semibold text-white">Métricas de Rendimiento</h3>
                         </div>
 
-                        {/* KPI Objective Card */}
-                        <div className="md:col-span-2 bg-[#0C1526] rounded-lg p-4">
-                            <div className="flex items-center gap-2 mb-3">
-                                <Target className="w-5 h-5 text-[#DFBD69]" />
-                                <h3 className="font-semibold text-[#C8D6E5]">KPI Objetivo</h3>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="text-center p-4 bg-[#1E293B] rounded-lg">
+                                <TrendingUp className="w-8 h-8 mx-auto mb-2 text-[#3B82F6]" />
+                                <p className="text-2xl font-bold text-white">{operatorData.totalSessions}</p>
+                                <p className="text-xs text-[#94A3B8]">Sesiones</p>
                             </div>
-                            <div className="space-y-3">
-                                <div>
-                                    <p className="text-sm text-[#94A3B8]">{objectiveKPI.title}</p>
-                                    <p className="text-xs text-[#64748B]">{objectiveKPI.description}</p>
-                                </div>
-                                <div className="flex items-end justify-between">
-                                    <div>
-                                        <p className="text-2xl font-bold text-white">{objectiveKPI.current}%</p>
-                                        <p className="text-xs text-[#94A3B8]">Actual</p>
-                                    </div>
-                                    <div className="text-right">
-                                        <p className="text-lg font-semibold text-[#DFBD69]">{objectiveKPI.target}%</p>
-                                        <p className="text-xs text-[#94A3B8]">Meta</p>
-                                    </div>
-                                </div>
-                                <div className="space-y-1">
-                                    <div className="flex justify-between text-xs">
-                                        <span className="text-[#94A3B8]">Progreso</span>
-                                        <span className="text-[#C8D6E5] font-semibold">{objectiveKPI.progress}%</span>
-                                    </div>
-                                    <div className="w-full bg-[#1E293B] rounded-full h-2">
-                                        <div
-                                            className={`h-2 rounded-full ${getProgressColor(objectiveKPI.progress)} transition-all duration-500`}
-                                            style={{ width: `${objectiveKPI.progress}%` }}
-                                        ></div>
-                                    </div>
-                                </div>
-                                {objectiveKPI.current >= objectiveKPI.target ? (
-                                    <div className="flex items-center gap-2 text-green-400 text-xs">
-                                        <Trophy className="w-4 h-4" />
-                                        <span>¡Objetivo cumplido!</span>
-                                    </div>
-                                ) : (
-                                    <div className="text-orange-400 text-xs">
-                                        <span>Faltan {objectiveKPI.target - objectiveKPI.current}% para la meta</span>
-                                    </div>
-                                )}
+                            <div className="text-center p-4 bg-[#1E293B] rounded-lg">
+                                <Target className="w-8 h-8 mx-auto mb-2 text-[#10B981]" />
+                                <p className="text-2xl font-bold text-white">{operatorData.totalItems}</p>
+                                <p className="text-xs text-[#94A3B8]">Items</p>
+                            </div>
+                            <div className="text-center p-4 bg-[#1E293B] rounded-lg">
+                                <Zap className="w-8 h-8 mx-auto mb-2 text-[#F59E0B]" />
+                                <p className="text-2xl font-bold text-white">{operatorData.avgItemsPerMinute.toFixed(1)}</p>
+                                <p className="text-xs text-[#94A3B8]">Items/min</p>
+                            </div>
+                            <div className="text-center p-4 bg-[#1E293B] rounded-lg">
+                                <Crosshair className="w-8 h-8 mx-auto mb-2 text-[#EF4444]" />
+                                <p className="text-2xl font-bold text-white">{operatorData.avgPrecision.toFixed(1)}%</p>
+                                <p className="text-xs text-[#94A3B8]">Precisión</p>
                             </div>
                         </div>
                     </div>
 
-                    {/* Sessions Table */}
-                    <div className="bg-[#0C1526] rounded-lg shadow-lg overflow-x-auto">
-                        <div className="p-4 border-b border-[#1E293B]">
-                            <h3 className="font-semibold text-[#C8D6E5]">Historial de Sesiones</h3>
+                    {/* KPI Objective */}
+                    <div className="bg-[#0C1526] rounded-xl p-6 border border-[#1E293B]">
+                        <div className="flex items-center gap-2 mb-4">
+                            <Target className="w-5 h-5 text-[#DFBD69]" />
+                            <h3 className="font-semibold text-white">KPI Objetivo</h3>
+                        </div>
+
+                        <div className="space-y-4">
+                            <div>
+                                <p className="text-sm text-[#94A3B8]">{objectiveKPI.title}</p>
+                                <p className="text-xs text-[#64748B]">{objectiveKPI.description}</p>
+                            </div>
+
+                            <div className="flex items-end justify-between">
+                                <div>
+                                    <p className="text-2xl font-bold text-white">{objectiveKPI.current}%</p>
+                                    <p className="text-xs text-[#94A3B8]">Actual</p>
+                                </div>
+                                <div className="text-right">
+                                    <p className="text-lg font-semibold text-[#DFBD69]">{objectiveKPI.target}%</p>
+                                    <p className="text-xs text-[#94A3B8]">Meta</p>
+                                </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <div className="flex justify-between text-sm">
+                                    <span className="text-[#94A3B8]">Progreso</span>
+                                    <span className="text-white font-semibold">{objectiveKPI.progress}%</span>
+                                </div>
+                                <div className="w-full bg-[#1E293B] rounded-full h-2">
+                                    <div
+                                        className={`h-2 rounded-full ${getProgressColor(objectiveKPI.progress)} transition-all duration-500`}
+                                        style={{ width: `${objectiveKPI.progress}%` }}
+                                    ></div>
+                                </div>
+                            </div>
+
+                            {objectiveKPI.current >= objectiveKPI.target ? (
+                                <div className="flex items-center gap-2 text-green-400 text-sm">
+                                    <Trophy className="w-4 h-4" />
+                                    <span>¡Objetivo cumplido!</span>
+                                </div>
+                            ) : (
+                                <div className="text-orange-400 text-sm">
+                                    <span>Faltan {objectiveKPI.target - objectiveKPI.current}% para la meta</span>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+
+                {/* Right Column - Sessions History */}
+                <div className="xl:col-span-1">
+                    <div className="bg-[#0C1526] rounded-xl border border-[#1E293B] h-full">
+                        <div className="p-6 border-b border-[#1E293B]">
+                            <div className="flex items-center gap-2 mb-2">
+                                <Clock className="w-5 h-5 text-[#DFBD69]" />
+                                <h3 className="font-semibold text-white">Historial de Sesiones</h3>
+                            </div>
                             <p className="text-sm text-[#94A3B8]">{sessions.length} sesiones registradas</p>
                         </div>
-                        <table className="w-full text-sm border-collapse">
-                            <thead className="bg-[#0D1B2A] text-[#94A3B8] uppercase text-xs">
-                                <tr>
-                                    <th className="p-3 text-left">ID Sesión</th>
-                                    <th className="p-3 text-left">Fecha</th>
-                                    <th className="p-3 text-left">Turno</th>
-                                    <th className="p-3 text-left">Área</th>
-                                    <th className="p-3 text-right">Duración</th>
-                                    <th className="p-3 text-right">Items</th>
-                                    <th className="p-3 text-right">Items/min</th>
-                                    <th className="p-3 text-center">Eficiencia</th>
-                                    <th className="p-3 text-center">Estado</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+
+                        <div className="max-h-[500px] overflow-y-auto">
+                            <div className="p-4 space-y-3">
                                 {sessions.map((session) => (
-                                    <tr
+                                    <div
                                         key={session.id}
-                                        className="border-b border-[#1E293B]/50 hover:bg-[#1E293B]/40 transition-colors"
+                                        className="p-4 bg-[#1E293B] rounded-lg border border-[#374151] hover:border-[#3B82F6] transition-colors"
                                     >
-                                        <td className="font-mono text-[#C8D6E5] p-3">
-                                            {session.id}
-                                        </td>
-                                        <td className="text-[#C8D6E5] p-3">
-                                            {session.fecha_inicio}
-                                        </td>
-                                        <td className="p-3">
-                                            <Badge
-                                                variant="status"
-                                                className={`${session.turno === "Matutino"
-                                                    ? "bg-[#172554] text-[#60A5FA] border border-[#1E40AF]"
-                                                    : "bg-[#422006] text-[#FDBA74] border border-[#713F12]"
-                                                    } text-xs uppercase`}
-                                            >
-                                                {session.turno}
-                                            </Badge>
-                                        </td>
-                                        <td className="text-[#C8D6E5] p-3">
-                                            {session.area_trabajo}
-                                        </td>
-                                        <td className="text-right text-[#94A3B8] p-3">
-                                            {session.duracion_sesion_min} min
-                                        </td>
-                                        <td className="text-right text-[#C8D6E5] font-semibold p-3">
-                                            {session.conteo_total_items}
-                                        </td>
-                                        <td className="text-right text-[#3B82F6] font-semibold p-3">
-                                            {session.tasa_items_por_minuto.toFixed(1)}
-                                        </td>
-                                        <td className="text-center p-3">
-                                            <span className={`font-semibold ${getEfficiencyColor(session.eficiencia_operario)}`}>
-                                                {session.eficiencia_operario}%
-                                            </span>
-                                        </td>
-                                        <td className="text-center p-3">
+                                        <div className="flex justify-between items-start mb-2">
+                                            <div>
+                                                <p className="font-mono text-sm text-[#C8D6E5]">{session.id}</p>
+                                                <p className="text-xs text-[#94A3B8]">{session.fecha_inicio}</p>
+                                            </div>
                                             <Badge
                                                 variant={session.estado_sesion === "COMPLETADA" ? "accent" : "muted"}
                                                 className="text-xs"
                                             >
                                                 {session.estado_sesion}
                                             </Badge>
-                                        </td>
-                                    </tr>
+                                        </div>
+
+                                        <div className="grid grid-cols-2 gap-2 text-xs">
+                                            <div>
+                                                <span className="text-[#94A3B8]">Área:</span>
+                                                <p className="text-white">{session.area_trabajo}</p>
+                                            </div>
+                                            <div>
+                                                <span className="text-[#94A3B8]">Turno:</span>
+                                                <Badge
+                                                    variant="status"
+                                                    className={`${session.turno === "Matutino"
+                                                        ? "bg-[#172554] text-[#60A5FA]"
+                                                        : "bg-[#422006] text-[#FDBA74]"
+                                                        } text-xs`}
+                                                >
+                                                    {session.turno}
+                                                </Badge>
+                                            </div>
+                                            <div>
+                                                <span className="text-[#94A3B8]">Duración:</span>
+                                                <p className="text-white">{session.duracion_sesion_min} min</p>
+                                            </div>
+                                            <div>
+                                                <span className="text-[#94A3B8]">Items:</span>
+                                                <p className="text-white font-semibold">{session.conteo_total_items}</p>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex justify-between items-center mt-3 pt-3 border-t border-[#374151]">
+                                            <div>
+                                                <span className="text-[#94A3B8] text-xs">Eficiencia:</span>
+                                                <span className={`font-semibold text-sm ml-2 ${getEfficiencyColor(session.eficiencia_operario)}`}>
+                                                    {session.eficiencia_operario}%
+                                                </span>
+                                            </div>
+                                            <div className="text-right">
+                                                <span className="text-[#94A3B8] text-xs">Items/min:</span>
+                                                <span className="font-semibold text-sm ml-2 text-[#3B82F6]">
+                                                    {session.tasa_items_por_minuto.toFixed(1)}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
                                 ))}
-                            </tbody>
-                        </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

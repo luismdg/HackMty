@@ -46,12 +46,20 @@ export default function Home() {
   };
 
   return (
-    <div className="flex h-screen bg-gradient-to-r from-black via-[#050B16] to-black text-white">
+    <div className="flex h-screen bg-gradient-to-r from-black via-[#020a17] to-black text-white relative">
+      {/* Background Image with Overlay */}
+      <div 
+        className="ml-[200px] absolute inset-0 bg-center bg-no-repeat opacity-50"
+        style={{ backgroundImage: 'url(/logo.png)' }}
+      />
+      {/* Gradient Overlay to maintain style */}
+      <div className="absolute inset-0 bg-gradient-to-r from-black via-[#021026] to-black opacity-90" />
+      
       <Sidebar
         currentSection={currentSection}
         onSectionChange={handleSectionChange}
       />
-      <main className="flex-1 overflow-auto">{renderMainContent()}</main>
+      <main className="flex-1 overflow-auto relative z-10">{renderMainContent()}</main>
     </div>
   );
 }

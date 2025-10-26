@@ -31,7 +31,7 @@ export function FlightSummary({ onFlightSelect }) {
             country: "USA",
             type:
               flightData.origin.includes("USA") &&
-              flightData.destination.includes("USA")
+                flightData.destination.includes("USA")
                 ? "Domestic"
                 : "International",
             ...flightData,
@@ -66,7 +66,7 @@ export function FlightSummary({ onFlightSelect }) {
 
   if (loading)
     return (
-      <div className="p-8 text-white">✈️ Cargando información de vuelos...</div>
+      <div className="p-8 text-white">Cargando información de vuelos...</div>
     );
   if (error)
     return (
