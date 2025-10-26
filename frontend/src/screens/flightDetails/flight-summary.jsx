@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "../../components/ui/button";
 import { Badge } from "../../components/ui/badge";
-import { Select } from "../../components/ui/select";
 
 export function FlightSummary({ onFlightSelect }) {
   const [searchTerm, setSearchTerm] = useState("");
@@ -83,7 +82,7 @@ export function FlightSummary({ onFlightSelect }) {
     );
 
   return (
-    <div className="min-h-screen bg-[#050B16] text-white p-8 space-y-6">
+    <div className="min-h-screen  text-white p-8 space-y-6">
       <div>
         <h1 className="text-3xl font-light tracking-tight text-[#DFBD69]">
           Resumen de Vuelos
@@ -93,7 +92,7 @@ export function FlightSummary({ onFlightSelect }) {
         </p>
       </div>
 
-      <div className="bg-[#0C1526] p-6 space-y-4 rounded-md">
+      <div className="backdrop-blur-3xl bg-blue-300/10 p-6 rounded-md">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
             <label className="text-xs mb-1.5 block text-[#94A3B8]">
@@ -110,32 +109,44 @@ export function FlightSummary({ onFlightSelect }) {
             <label className="text-xs mb-1.5 block text-[#94A3B8]">
               Aerolínea
             </label>
-            <Select value={airline} onValueChange={setAirline}>
+            <select
+              value={airline}
+              onChange={(e) => setAirline(e.target.value)}
+              className="appearance-none bg-transparent border border-[#09111E] flex px-2 py-2 items-center rounded-md text-[#94A3B8] text-sm"
+            >
               <option value="any">- Cualquiera -</option>
               <option value="American Airlines">American Airlines</option>
               <option value="Delta Airlines">Delta Airlines</option>
               <option value="United Airlines">United Airlines</option>
-            </Select>
+            </select>
           </div>
           <div>
             <label className="text-xs mb-1.5 block text-[#94A3B8]">País</label>
-            <Select value={country} onValueChange={setCountry}>
+            <select
+              value={country}
+              onChange={(e) => setCountry(e.target.value)}
+              className="appearance-none bg-transparent border border-[#09111E] flex px-2 py-2 items-center rounded-md text-[#94A3B8] text-sm"
+            >
               <option value="any">- Cualquiera -</option>
               <option value="USA">USA</option>
               <option value="Mexico">Mexico</option>
               <option value="Canada">Canada</option>
-            </Select>
+            </select>
           </div>
           <div>
             <label className="text-xs mb-1.5 block text-[#94A3B8]">
               Duración
             </label>
-            <Select value={durationFilter} onValueChange={setDurationFilter}>
+            <select
+              value={durationFilter}
+              onChange={(e) => setDurationFilter(e.target.value)}
+              className="appearance-none bg-transparent border border-[#09111E] flex px-2 py-2 items-center rounded-md text-[#94A3B8] text-sm"
+            >
               <option value="any">- Cualquiera -</option>
               <option value="short">Corto (&lt;= 3h)</option>
               <option value="medium">Medio (3-6h)</option>
               <option value="long">Largo (&gt; 6h)</option>
-            </Select>
+            </select>
           </div>
         </div>
       </div>
@@ -145,8 +156,8 @@ export function FlightSummary({ onFlightSelect }) {
       </div>
 
       <div className="overflow-hidden rounded-md">
-        <table className="w-full text-left text-sm border-collapse">
-          <thead className="bg-[#0D1B2A] text-[#94A3B8] uppercase text-xs">
+        <table className="w-full text-left text-xs border-collapse">
+          <thead className="backdrop-blur-3xl bg-blue-300/10 text-[#94A3B8] uppercase text-xs">
             <tr>
               <th className="p-3 font-semibold">Aerolínea</th>
               <th className="p-3 font-semibold">ID</th>
@@ -163,9 +174,9 @@ export function FlightSummary({ onFlightSelect }) {
               <tr
                 key={`${flight.id}-${i}`}
                 onClick={() => onFlightSelect(flight.id)}
-                className="cursor-pointer hover:bg-[#1E293B]/40 transition-colors"
+                className="cursor-pointer backdrop-blur-3xl bg-slate-900/20 hover:bg-[#1E293B]/40 transition-colors"
               >
-                <td className="p-3">{flight.airline}</td>
+                <td className="p-3 ">{flight.airline}</td>
                 <td className="p-3 text-[#E2E8F0]">{flight.id}</td>
                 <td className="p-3 text-[#E2E8F0]">{flight.origin}</td>
                 <td className="p-3 text-[#E2E8F0]">{flight.destination}</td>
@@ -175,7 +186,7 @@ export function FlightSummary({ onFlightSelect }) {
                 <td className="p-3">
                   <Badge
                     variant="status"
-                    className="bg-[#172554] text-[#60A5FA] border border-[#1E40AF] tracking-wide px-2 py-1 text-xs uppercase"
+                    className="bg-[#172554]/10 backdrop-blur-3xl  text-[#60A5FA] tracking-wide px-2 py-1 text-xs uppercase border-none"
                   >
                     {flight.status}
                   </Badge>

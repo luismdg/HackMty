@@ -46,7 +46,7 @@ export default function Home() {
   };
 
   return (
-    <div className="flex h-screen bg-[#050B16]">
+    <div className="flex h-screen bg-gradient-to-r from-black via-[#050B16] to-black text-white">
       <Sidebar
         currentSection={currentSection}
         onSectionChange={handleSectionChange}

@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "../../components/ui/button";
 import { Badge } from "../../components/ui/badge";
-import { Select } from "../../components/ui/select";
 
 export function ProductivityTable({ onOperatorSelect }) {
   const [sessions, setSessions] = useState([]);
@@ -60,11 +59,15 @@ export function ProductivityTable({ onOperatorSelect }) {
     return Math.min(100, Math.max(0, score));
   };
 
-  const getOverallColor = (overall) => {
-    if (overall >= 90) return "border-green-500";
-    if (overall >= 80) return "border-yellow-500";
-    if (overall >= 70) return "border-orange-500";
-    return "border-red-500";
+  const getRankColor = (rank) => {
+    const colors = {
+      S: "bg-purple-700/50 backdrop-blur-3xl text-white border-none rounded-md",
+      A: "bg-green-700/50 backdrop-blur-3xl text-white border-none rounded-md",
+      B: "bg-blue-700/50 backdrop-blur-3xl text-white border-none rounded-md",
+      C: "bg-yellow-400/50 backdrop-blur-3xl text-black border-none rounded-md",
+      D: "bg-red-700/50 backdrop-blur-3xl text-white border-none rounded-md",
+    };
+    return colors[rank] || "bg-gray-600 text-white";
   };
 
   const uniqueOperators = [...new Set(sessions.map(session => session.nombre_operario))];
@@ -124,7 +127,7 @@ export function ProductivityTable({ onOperatorSelect }) {
       {/* Header */}
       <div>
         <h1 className="text-3xl font-light tracking-tight text-[#DFBD69]">
-          Productividad del Equipo
+          Análisis de Productividad
         </h1>
         <p className="text-neutral-400 mt-1 text-sm">
           Desempeño y métricas de operarios
@@ -335,11 +338,18 @@ export function ProductivityTable({ onOperatorSelect }) {
                 className="bg-[#09111E] p-4 rounded-md border border-[#1E293B] hover:border-[#3B82F6] transition-colors cursor-pointer"
                 onClick={() => handleOperatorClick(operario.nombre)}
               >
-                <div className="flex items-center gap-3 mb-3">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-white ${index === 0 ? "bg-yellow-500" :
-                    index === 1 ? "bg-gray-400" :
-                      "bg-orange-500"
-                    }`}>
+                <div className="flex items-center gap-3 mb-2">
+                  <div
+                    className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-white ${
+                      index === 0
+                        ? "bg-yellow-500/50 backdrop-blur-3xl"
+                        : index === 1
+                        ? "bg-gray-400/50 backdrop-blur-3xl"
+                        : index === 2
+                        ? "bg-orange-500/50 backdrop-blur-3xl"
+                        : "bg-blue-700/50 backdrop-blur-3xl"
+                    }`}
+                  >
                     {index + 1}
                   </div>
                   <div>
@@ -349,10 +359,10 @@ export function ProductivityTable({ onOperatorSelect }) {
                     </p>
                   </div>
                 </div>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-[#94A3B8]">Eficiencia:</span>
-                    <span className="text-white font-semibold">
+                <div className="space-y-1">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-[#C8D6E5]">Eficiencia:</span>
+                    <span className="font-semibold text-blue-700/90">
                       {operario.eficiencia_promedio}%
                     </span>
                   </div>

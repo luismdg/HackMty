@@ -3,7 +3,7 @@ import { Button } from "../../components/ui/button";
 
 export function Sidebar({ currentSection, onSectionChange }) {
   return (
-    <aside className="w-64 bg-[#0A1A2F]/80 border-r border-[#1E293B] backdrop-blur-xl flex flex-col">
+    <aside className="w-64 bg-[#050B16] backdrop-blur-3xl flex flex-col">
       {/* Logo */}
       <div className="p-6 flex items-center justify-center">
         <img src="/logo.png" alt="Logo" className="w-28 h-16 object-contain" />
