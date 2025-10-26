@@ -49,23 +49,23 @@ $$
 
 ## Project Structure
 
-'''
+```
 FlightFlow/
 ├── backend/              # FastAPI application
 │   ├── app/
-│   │   ├── main.py      # Application entry point
-│   │   ├── routes/      # API endpoints
-│   │   └── models/      # ML models and utilities
-├── frontend/            # React application
+│   │   ├── main.py       # Application entry point
+│   │   ├── routes/       # API endpoints
+│   │   └── models/       # ML models and utilities
+├── frontend/             # React application
 │   ├── src/
-│   │   ├── screens/     # Main application views
-│   │   └── components/  # Reusable UI components
-├── data/                # CSV datasets
+│   │   ├── screens/      # Main application views
+│   │   └── components/   # Reusable UI components
+├── data/                 # CSV datasets
 │   ├── flight_data.csv
 │   ├── products_data.csv
 │   └── productivity_data.csv
 └── README.md
-'''
+```
 
 ---
 
